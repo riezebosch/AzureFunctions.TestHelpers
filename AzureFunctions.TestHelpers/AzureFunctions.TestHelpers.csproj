@@ -1,11 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <IsPackable>true</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.26" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.2.0" />
     </ItemGroup>
+
+    <ItemGroup>
+        <None Include="readme.txt" Pack="true" PackagePath="." />
+    </ItemGroup>
+
+    <PropertyGroup>
+        <Authors>Manuel Riezebosch</Authors>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <AssemblyTitle>AzureFunctions.TestHelpers</AssemblyTitle>
+        <Description>Spin up integration tests on your Azure Functions!</Description>
+        <PackageReleaseNotes></PackageReleaseNotes>
+        <PackageTags>azure;functions;serverless;integration;testing;tdd</PackageTags>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/riezebosch/AzureFunctions.TestHelpers.git</RepositoryUrl>
+        <Version>0.0.1234</Version>
+    </PropertyGroup>
 </Project>
