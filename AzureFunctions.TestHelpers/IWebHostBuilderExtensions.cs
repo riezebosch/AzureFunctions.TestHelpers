@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Azure.WebJobs.Script;
+using Microsoft.Azure.WebJobs.Script.Rpc;
 
 namespace AzureFunctions.TestHelpers
 {
@@ -19,7 +20,8 @@ namespace AzureFunctions.TestHelpers
             UpdateEnvironmentVariables(new Dictionary<string, string>
             {
                 [EnvironmentSettingNames.AzureWebJobsScriptRoot] = builder.FindFunctionsFromContentRoot(),
-                ["AzureWebJobsStorage"] = azureWebJobsStorage
+                ["AzureWebJobsStorage"] = azureWebJobsStorage,
+                [$"{LanguageWorkerConstants.LanguageWorkersSectionName}:{LanguageWorkerConstants.WorkersDirectorySectionName}"] = Environment.CurrentDirectory
             });
             
             return builder;
