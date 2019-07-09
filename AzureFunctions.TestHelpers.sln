@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions.TestHelpers", "AzureFunctions.TestHelpers\AzureFunctions.TestHelpers.csproj", "{A4517973-4E70-4EB6-A343-C004983D0332}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions.TestHelpers.Tests.DemoFunctions", "AzureFunctions.TestHelpers.Tests.DemoFunctions\AzureFunctions.TestHelpers.Tests.DemoFunctions.csproj", "{A4517973-4E70-4EB6-A343-C004983D0332}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions.TestHelpers.Tests", "AzureFunctions.TestHelpers.Tests\AzureFunctions.TestHelpers.Tests.csproj", "{10228FF1-2C40-4F95-BA2E-515EFDCBE153}"
 EndProject
@@ -12,6 +12,8 @@ ProjectSection(SolutionItems) = preProject
 	nuget.config = nuget.config
 	.gitignore = .gitignore
 EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions.TestHelpers", "AzureFunctions.TestHelpers\AzureFunctions.TestHelpers.csproj", "{A2783DEC-6705-4131-B869-0723156ADD2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,5 +52,17 @@ Global
 		{10228FF1-2C40-4F95-BA2E-515EFDCBE153}.Release|x64.Build.0 = Release|Any CPU
 		{10228FF1-2C40-4F95-BA2E-515EFDCBE153}.Release|x86.ActiveCfg = Release|Any CPU
 		{10228FF1-2C40-4F95-BA2E-515EFDCBE153}.Release|x86.Build.0 = Release|Any CPU
+		{A2783DEC-6705-4131-B869-0723156ADD2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2783DEC-6705-4131-B869-0723156ADD2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2783DEC-6705-4131-B869-0723156ADD2D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A2783DEC-6705-4131-B869-0723156ADD2D}.Debug|x64.Build.0 = Debug|Any CPU
+		{A2783DEC-6705-4131-B869-0723156ADD2D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A2783DEC-6705-4131-B869-0723156ADD2D}.Debug|x86.Build.0 = Debug|Any CPU
+		{A2783DEC-6705-4131-B869-0723156ADD2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2783DEC-6705-4131-B869-0723156ADD2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2783DEC-6705-4131-B869-0723156ADD2D}.Release|x64.ActiveCfg = Release|Any CPU
+		{A2783DEC-6705-4131-B869-0723156ADD2D}.Release|x64.Build.0 = Release|Any CPU
+		{A2783DEC-6705-4131-B869-0723156ADD2D}.Release|x86.ActiveCfg = Release|Any CPU
+		{A2783DEC-6705-4131-B869-0723156ADD2D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
