@@ -6,7 +6,6 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.26" />
-        <PackageReference Include="Microsoft.Azure.WebJobs.Script.WebHost" Version="2.0.12555" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.2.0" />
     </ItemGroup>
 </Project>
