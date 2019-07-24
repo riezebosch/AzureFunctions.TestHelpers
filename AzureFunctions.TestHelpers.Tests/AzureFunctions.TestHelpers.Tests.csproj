@@ -11,15 +11,14 @@
     <PackageReference Include="NSubstitute" Version="4.2.0" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Script.WebHost" Version="2.0.12543" />
     <PackageReference Include="FluentAssertions" Version="5.7.0" />
     <PackageReference Include="Flurl.Http" Version="2.4.2" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AzureFunctions.TestHelpers.Tests.DemoFunctions\AzureFunctions.TestHelpers.Tests.DemoFunctions.csproj" />
     <ProjectReference Include="..\AzureFunctions.TestHelpers\AzureFunctions.TestHelpers.csproj" />
   </ItemGroup>
-
 </Project>
