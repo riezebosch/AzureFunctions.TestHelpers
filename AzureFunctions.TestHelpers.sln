@@ -9,7 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions.TestHelpers.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Items", "Items", "{EA95F51F-D362-49F8-924A-16BA011CAF79}"
 ProjectSection(SolutionItems) = preProject
-	nuget.config = nuget.config
 	.gitignore = .gitignore
 	appveyor.yml = appveyor.yml
 EndProjectSection
