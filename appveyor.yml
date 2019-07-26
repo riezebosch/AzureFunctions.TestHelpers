@@ -20,3 +20,6 @@ deploy:
     secure: C1XWdllP3h983mIvodvqrSkPTgZygNPPGjB/p9+bWzvIpQsaS2D1I3/HxqE/2rwS
   on:
     branch: master
+environment:
+  AzureWebJobsStorage:
+    secure: 8IK3x1NQkPW0v67xtLBrhkZzT+LUCM+JN9mhXsMfdMeeE8IqGxOdLi0gblAvIlsHu2/4E2lL46wzz2jokxJBTvf4heYtwKHhO2+7i6n4DRjOnHyRXePgM2sl34ehBekEXbcz3FVZI6nDMyEOt4rPMr5z5sui1jr2eMnt3YTRFHNCBmZUHZrh93MFvzyEql3cY7ZiLkIHF7P4oiANL+sxshbFaZJuBpje4njSMYo1m9R4VZVaOyKZ6EHQWMTi69WZzLlXdgppJUEEjFVzhMsh8Q==
