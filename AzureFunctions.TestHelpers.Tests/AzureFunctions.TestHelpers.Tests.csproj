@@ -21,4 +21,10 @@
     <ProjectReference Include="..\AzureFunctions.TestHelpers.Tests.DemoFunctions\AzureFunctions.TestHelpers.Tests.DemoFunctions.csproj" />
     <ProjectReference Include="..\AzureFunctions.TestHelpers\AzureFunctions.TestHelpers.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

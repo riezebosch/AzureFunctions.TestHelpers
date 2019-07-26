@@ -16,15 +16,6 @@ namespace AzureFunctions.TestHelpers.Tests
 {
     public static class HostBuilderTests
     {
-        static HostBuilderTests()
-        {
-            if (Environment.GetEnvironmentVariable("AzureWebJobsStorage").IsNullOrEmpty())
-            {
-                // Use local storage emulator is environment variable is not set
-                Environment.SetEnvironmentVariable("AzureWebJobsStorage", "UseDevelopmentStorage=true");
-            }
-        }
-        
         [Fact]
         public static async Task HttpTriggeredFunctionWithDependencyReplacement()
         {
