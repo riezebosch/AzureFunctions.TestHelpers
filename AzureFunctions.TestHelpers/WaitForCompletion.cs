@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DurableTask.Core;
 using Microsoft.Azure.WebJobs;
 
 namespace AzureFunctions.TestHelpers
@@ -24,6 +25,8 @@ namespace AzureFunctions.TestHelpers
             }
 
             await ThrowIfFailed(client);
+            await client
+                .PurgeInstanceHistoryAsync(DateTime.MinValue, null, new []{ OrchestrationStatus.Completed});
         }
 
         private static async Task ThrowIfFailed(DurableOrchestrationClientBase client)
