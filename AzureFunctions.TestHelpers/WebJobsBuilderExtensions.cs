@@ -2,7 +2,6 @@ using System;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace AzureFunctions.TestHelpers
 {
@@ -15,11 +14,10 @@ namespace AzureFunctions.TestHelpers
         }
 
         public static IWebJobsBuilder AddDurableTaskInTestHub(this IWebJobsBuilder builder, Action<DurableTaskOptions> configure = null) =>
-            builder.AddDurableTask(
-                options =>
-                {
-                    configure?.Invoke(options);
-                    options.HubName = $"test{Guid.NewGuid():N}";
-                });
+            builder.AddDurableTask(options =>
+            {
+                configure?.Invoke(options);
+                options.HubName = $"test{Guid.NewGuid():N}";
+            });
     }
 }

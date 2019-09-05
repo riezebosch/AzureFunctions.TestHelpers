@@ -10,7 +10,7 @@ namespace AzureFunctions.TestHelpers
 {
     public class DummyHttpContext : HttpContext
     {
-        public DummyHttpContext(DummyHttpRequest request)
+        public DummyHttpContext(HttpRequest request)
         {
             Request = request;
         }
@@ -19,13 +19,12 @@ namespace AzureFunctions.TestHelpers
         {
         }
 
-        public override IFeatureCollection Features { get; }
+        public override IFeatureCollection Features { get; } = new FeatureCollection();
         public override HttpRequest Request { get; }
-        public override HttpResponse Response { get; }
-        public override ConnectionInfo Connection { get; }
-        public override WebSocketManager WebSockets { get; }
-        [Obsolete]
-        public override AuthenticationManager Authentication { get; }
+        public override HttpResponse Response { get; } = null;
+        public override ConnectionInfo Connection { get; } = null;
+        public override WebSocketManager WebSockets { get; } = null;
+        [Obsolete] public override AuthenticationManager Authentication { get; } = null;
         public override ClaimsPrincipal User { get; set; }
         public override IDictionary<object, object> Items { get; set; } = new Dictionary<object, object>();
         public override IServiceProvider RequestServices { get; set; }

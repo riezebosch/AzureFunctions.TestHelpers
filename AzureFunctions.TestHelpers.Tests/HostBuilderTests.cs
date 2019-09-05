@@ -1,10 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AzureFunctions.TestHelpers.Starters;
-using Castle.Core.Internal;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Timers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;

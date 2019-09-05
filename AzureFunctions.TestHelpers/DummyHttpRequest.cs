@@ -32,7 +32,7 @@ namespace AzureFunctions.TestHelpers
         public override long? ContentLength { get; set; }
         public override string ContentType { get; set; }
         public override Stream Body { get; set; } = new MemoryStream();
-        public override bool HasFormContentType { get; }
+        public override bool HasFormContentType { get; } = false;
         public override IFormCollection Form { get; set; }
     }
 }

@@ -25,8 +25,10 @@ namespace AzureFunctions.TestHelpers
             }
 
             await ThrowIfFailed(client);
-            await client
-                .PurgeInstanceHistoryAsync(DateTime.MinValue, null, new []{ OrchestrationStatus.Completed});
+            await client.PurgeInstanceHistoryAsync(
+                DateTime.MinValue, 
+                null, 
+                new []{ OrchestrationStatus.Completed });
         }
 
         private static async Task ThrowIfFailed(DurableOrchestrationClientBase client)
