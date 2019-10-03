@@ -3,7 +3,7 @@
 
 # AzureFunctions.TestHelpers ⚡
 
-Host and invoke Azure Functions from a test by combining the bits and pieces of 
+Host and invoke Azure Functions from a test by combining the bits and pieces of
 the [WebJobs SDK](https://docs.microsoft.com/en-us/azure/app-service/webjobs-sdk-how-to),
 [Azure Functions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-overview)
 and [Durable Functions](https://docs.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-concepts)
@@ -23,7 +23,7 @@ Register and replace services that are injected into your functions.
 
 ### `builder.AddDurableTaskInTestHub()`
 
-Add and configure using [the durable task extensions](https://docs.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-webjobs-sdk#webjobs-sdk-3x) and 
+Add and configure using [the durable task extensions](https://docs.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-webjobs-sdk#webjobs-sdk-3x) and
 use a random generated hub name to start with a clean history.
 
 ## JobHost Extensions
@@ -51,13 +51,13 @@ public static async Task HttpTriggeredFunctionWithDependencyReplacement()
     {
         await host.StartAsync();
         var jobs = host.Services.GetService<IJobHost>();
-        
+
         // Act
         await jobs.CallAsync(nameof(DemoInjection), new Dictionary<string, object>
         {
             ["request"] = new DummyHttpRequest()
         });
-        
+
         // Assert
         mock
             .Received()
@@ -73,7 +73,7 @@ Invoke a time-triggered durable function:
 public static async Task DurableFunction()
 {
     // Arrange
-    var mock = Substitute.For<IInjectable>();            
+    var mock = Substitute.For<IInjectable>();
     using (var host = new HostBuilder()
         .ConfigureWebJobs(builder => builder
             .AddTimers()
@@ -85,7 +85,7 @@ public static async Task DurableFunction()
     {
         await host.StartAsync();
         var jobs = host.Services.GetService<IJobHost>();
-        
+
         // Act
         await jobs.CallAsync(nameof(Starter), new Dictionary<string, object>
         {
@@ -106,13 +106,32 @@ public static async Task DurableFunction()
 
 Include `Microsoft.Azure.Functions.Extensions` in your test project to [enable dependency injection](https://docs.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection)!
 
-## AzureWebJobsStorage
+## Azure Storage Account
+
+You need an azure storage table to store the state of the durable functions.
+
+### Azure
+
+Just copy the [connection string from your storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-configure-connection-string#view-and-copy-a-connection-string),
+works everywhere.
+
+### Azure Storage Emulator
+
+Set the connection string to `UseDevelopmentStorage=true`. Unfortunately works only on Windows. See this [blog](https://zimmergren.net/azure-devops-unit-tests-storage-emulator-hosted-agent/)
+on how to enable the storage emulator in a azure devops pipeline.
+
+### Azurite
+
+Unfortunately, `azurite@2` doesn't work with the current version of durable functions,
+and `azurite@3` doesn't have the [required features (implemented yet)](https://github.com/Azure/Azurite#azurite-v3).
+
+## Host connection strings
 
 The storage connection string setting [is required](https://docs.microsoft.com/en-us/azure/app-service/webjobs-sdk-how-to#host-connection-strings).
 
-### Option 1: 
+### Option 1:
 
-Set the environment variable `AzureWebJobsStorage`. Hereby you can also overwrite the from option 2 on your local dev machine.
+Set the environment variable `AzureWebJobsStorage`. Hereby you can also overwrite the configured connection from option 2 on your local dev machine.
 
 ### Option 2:
 
@@ -120,20 +139,14 @@ Include an `appsettings.json` in your test project:
 
 ```json
 {
-  "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=...;AccountKey=...==;EndpointSuffix=core.windows.net" 
+  "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=...;AccountKey=...==;EndpointSuffix=core.windows.net"
 }
 ```
-    
+
 ```xml
-  <ItemGroup>
-    <None Include="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+<ItemGroup>
+<None Include="appsettings.json">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+</None>
+</ItemGroup>
 ```
-
-##  Azurite
-
-Unfortunately, `azurite@2` doesn't work with the current version of durable functions,
-and `azurite@3` doesn't have the [required features (implemented yet)](https://github.com/Azure/Azurite#azurite-v3).
-    
