@@ -145,8 +145,8 @@ Include an `appsettings.json` in your test project:
 
 ```xml
 <ItemGroup>
-<None Include="appsettings.json">
-    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-</None>
+    <None Include="appsettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
 </ItemGroup>
 ```
