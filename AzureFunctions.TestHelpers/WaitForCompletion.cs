@@ -11,17 +11,12 @@ namespace AzureFunctions.TestHelpers
     {
         [FunctionName(nameof(WaitForCompletion))]
         [NoAutomaticTrigger]
-        public static async Task Run([OrchestrationClient]DurableOrchestrationClientBase client)
+        public static async Task Run([OrchestrationClient]DurableOrchestrationClientBase client, TimeSpan? timeout)
         {
-            while (true)
+            using (var cts = new CancellationTokenSource())
             {
-                var status = await client.GetStatusAsync();
-                if (status.All(x => x.RuntimeStatus.IsReady()))
-                {
-                    break;
-                }
-
-                Thread.Sleep(TimeSpan.FromSeconds(5));
+                if (timeout != null) cts.CancelAfter(timeout.Value);
+                await Wait(client, cts.Token);
             }
 
             await ThrowIfFailed(client);
@@ -29,6 +24,20 @@ namespace AzureFunctions.TestHelpers
                 DateTime.MinValue, 
                 null, 
                 new []{ OrchestrationStatus.Completed });
+        }
+
+        private static async Task Wait(DurableOrchestrationClientBase client, CancellationToken token)
+        {
+            while (!token.IsCancellationRequested)
+            {
+                var status = await client.GetStatusAsync(token);
+                if (status.All(x => x.RuntimeStatus.IsReady()))
+                {
+                    break;
+                }
+
+                await Task.Delay(TimeSpan.FromSeconds(5), token);
+            }
         }
 
         private static async Task ThrowIfFailed(DurableOrchestrationClientBase client)
