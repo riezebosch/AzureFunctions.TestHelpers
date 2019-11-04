@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -16,10 +17,12 @@ namespace AzureFunctions.TestHelpers.Tests
         public static async Task HttpTriggeredFunctionWithDependencyReplacement()
         {
             // Arrange
+            object response = null;
             var mock = Substitute.For<IInjectable>();
+            
             using (var host = new HostBuilder()
                 .ConfigureWebJobs(builder => builder
-                    .AddHttp()
+                    .AddHttp(options => options.SetResponse = (request, o) => response = o)
                     .UseWebJobsStartup<Startup>()
                     .ConfigureServices(services => services.Replace(ServiceDescriptor.Singleton(mock))))
                 .Build())
@@ -37,6 +40,10 @@ namespace AzureFunctions.TestHelpers.Tests
                 mock
                     .Received()
                     .Execute();
+
+                response
+                    .Should()
+                    .BeOfType<OkResult>();
             }
         }
     }

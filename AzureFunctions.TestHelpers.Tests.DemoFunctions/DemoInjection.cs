@@ -1,4 +1,5 @@
 using System.Net.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
@@ -14,9 +15,10 @@ namespace AzureFunctions.TestHelpers
         }
         
         [FunctionName(nameof(DemoInjection))]
-        public void Run([HttpTrigger(AuthorizationLevel.Anonymous, Route = "demo-injection")]HttpRequestMessage request)
+        public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, Route = "demo-injection")]HttpRequestMessage request)
         {
             _injectable.Execute();
+            return new OkResult();
         }
     }
 }
