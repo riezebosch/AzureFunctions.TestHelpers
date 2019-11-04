@@ -25,10 +25,9 @@ namespace AzureFunctions.TestHelpers.Tests
             _host = new HostBuilder()
                 .ConfigureWebJobs(builder => builder
                     .AddTimers()
-                    .AddDurableTaskInTestHub()
+                    .AddDurableTaskInTestHub(options => options.MaxQueuePollingInterval = TimeSpan.FromSeconds(2))
                     .AddAzureStorageCoreServices()
-                    .UseWebJobsStartup<Startup>()
-                    .ConfigureServices(services => services.Replace(ServiceDescriptor.Singleton(_mock))))
+                    .ConfigureServices(services => services.AddSingleton(_mock)))
                 .Build();
             
             _host.StartAsync().ConfigureAwait(false).GetAwaiter().GetResult();

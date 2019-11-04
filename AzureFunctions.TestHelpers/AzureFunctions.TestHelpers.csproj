@@ -17,7 +17,7 @@
         <NeutralLanguage>en-US</NeutralLanguage>
         <AssemblyTitle>AzureFunctions.TestHelpers</AssemblyTitle>
         <Description>Spin up integration tests on your Azure Functions!</Description>
-        <PackageReleaseNotes>Dependency constraint on DurableTask 1.8+ because of change in interface.</PackageReleaseNotes>
+        <PackageReleaseNotes>Wait, ThrowIfFailed and Purge separated.</PackageReleaseNotes>
         <PackageTags>azure;functions;serverless;integration;testing;tdd</PackageTags>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <RepositoryType>git</RepositoryType>
