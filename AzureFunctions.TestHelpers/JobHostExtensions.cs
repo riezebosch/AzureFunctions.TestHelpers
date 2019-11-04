@@ -7,6 +7,10 @@ namespace AzureFunctions.TestHelpers
 {
     public static class JobHostExtensions
     {
+        /// <summary>
+        /// REMARK: This method does NOT throw when orchestrations have failed.
+        /// Please, chain the <see cref="ThrowIfFailed" /> and <see cref="Purge"/> to this method for that behavior.
+        /// </summary>
         public static async Task<IJobHost> Wait(this IJobHost jobs, TimeSpan? timeout = null)
         {
             await jobs.CallAsync(nameof(WaitForCompletion),
@@ -15,6 +19,9 @@ namespace AzureFunctions.TestHelpers
             return jobs;
         }
         
+        /// <summary>
+        /// Query the status of all orchestrations in current hub and throw an exception if any one failed. 
+        /// </summary>
         public static async Task<IJobHost> ThrowIfFailed(this Task<IJobHost> task)
         {
             var jobs = await task;
@@ -23,6 +30,9 @@ namespace AzureFunctions.TestHelpers
             return jobs;
         }
         
+        /// <summary>
+        /// Purge the history of all (completed, failed and terminated) orchestrations. 
+        /// </summary>
         public static async Task<IJobHost> Purge(this Task<IJobHost> task)
         {
             var jobs = await task;
