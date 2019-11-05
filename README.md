@@ -136,7 +136,7 @@ public static async Task DurableFunction()
         });
 
         await jobs
-            .Wait()
+            .Ready()
             .ThrowIfFailed()
             .Purge();
 
@@ -168,14 +168,14 @@ host = new HostBuilder()
 
 ```c#
 await jobs
-    .Wait(TimeSpan.FromSeconds(30))
+    .Ready(TimeSpan.FromSeconds(30))
     .ThrowIfFailed()
     .Purge();
 ```
 
 *BREAKING:* In `v2` the `WaitForOrchestrationsCompletion` is replaced with `Wait().ThrowIfFailed().Purge()`.
 
-### Wait
+### Ready
 
 Invoke function to monitor orchestrations status and wait for all to complete.
 

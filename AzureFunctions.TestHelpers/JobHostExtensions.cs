@@ -11,7 +11,7 @@ namespace AzureFunctions.TestHelpers
         /// REMARK: This method does NOT throw when orchestrations have failed.
         /// Please, chain the <see cref="ThrowIfFailed" /> and <see cref="Purge"/> to this method for that behavior.
         /// </summary>
-        public static async Task<IJobHost> Wait(this IJobHost jobs, TimeSpan? timeout = null)
+        public static async Task<IJobHost> Ready(this IJobHost jobs, TimeSpan? timeout = null)
         {
             await jobs.CallAsync(nameof(WaitForCompletion),
                 new Dictionary<string, object> {["timeout"] = timeout});

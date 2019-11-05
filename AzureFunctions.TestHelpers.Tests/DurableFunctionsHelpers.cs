@@ -34,7 +34,7 @@ namespace AzureFunctions.TestHelpers.Tests
         }
 
         [Fact]
-        public async Task Wait()
+        public async Task Ready()
         {
             // Arrange
             var jobs = _host.Services.GetService<IJobHost>();
@@ -45,7 +45,8 @@ namespace AzureFunctions.TestHelpers.Tests
                 ["timerInfo"] = new TimerInfo(new WeeklySchedule(), new ScheduleStatus())
             });
 
-            await jobs.Wait()
+            await jobs
+                .Ready()
                 .ThrowIfFailed()
                 .Purge();
 
@@ -71,7 +72,7 @@ namespace AzureFunctions.TestHelpers.Tests
                 ["timerInfo"] = new TimerInfo(new WeeklySchedule(), new ScheduleStatus())
             });
 
-            jobs.Invoking(async x => await x.Wait(TimeSpan.FromSeconds(20)))
+            jobs.Invoking(async x => await x.Ready(TimeSpan.FromSeconds(20)))
                 .Should()
                 .Throw<TaskCanceledException>();
 
@@ -97,7 +98,7 @@ namespace AzureFunctions.TestHelpers.Tests
             });
 
             await jobs
-                .Wait()
+                .Ready()
                 .Purge();
 
             // Assert
@@ -120,17 +121,16 @@ namespace AzureFunctions.TestHelpers.Tests
             {
                 ["timerInfo"] = new TimerInfo(new WeeklySchedule(), new ScheduleStatus())
             });
-
-
+            
             // Assert
             jobs.Invoking(x => x
-                    .Wait(TimeSpan.FromSeconds(20))
+                    .Ready(TimeSpan.FromSeconds(20))
                     .ThrowIfFailed())
                 .Should()
                 .Throw<Exception>();
 
             await jobs
-                .Wait()
+                .Ready()
                 .Purge();
         }
 
