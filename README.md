@@ -120,7 +120,7 @@ public static async Task DurableFunction()
     var mock = Substitute.For<IInjectable>();
     using (var host = new HostBuilder()
         .ConfigureWebJobs(builder => builder
-            .AddDurableTaskInTestHub()
+            .AddDurableTask(options => options.HubName = nameof(MyTestFunction))
             .AddAzureStorageCoreServices()
             .ConfigureServices(services => services.AddSingleton(mock)))
         .Build())
@@ -157,7 +157,7 @@ Do NOT add _timers_ to the web jobs host!
 using (var host = new HostBuilder()
         .ConfigureWebJobs(builder => builder
             //.AddTimers() <-- DON'T ADD TIMERS
-            .AddDurableTaskInTestHub()
+            .AddDurableTask(options => options.HubName = nameof(MyTestFunction))
             .AddAzureStorageCoreServices()
             .ConfigureServices(services => services.AddSingleton(mock)))
         .Build())
@@ -169,21 +169,35 @@ using (var host = new HostBuilder()
 It turns out it is not required to invoke time triggered functions, and by doing so 
 your functions will be triggered randomly messing up the status of your orchestration instances.
 
-### Add Durable Task in TestHub
+### Isolate Durable Functions
 
-Add and configure using [the durable task extensions](https://docs.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-webjobs-sdk#webjobs-sdk-3x) and
-use a random generated hub name to start with a clean history.
+Add and configure Durable Functions using [the durable task extensions](https://docs.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-webjobs-sdk#webjobs-sdk-3x) and
+use a specific hub name to [isolate from other parallel tests](https://docs.microsoft.com/nl-nl/azure/azure-functions/durable/durable-functions-task-hubs).
 
 ```c#
 host = new HostBuilder()
     .ConfigureWebJobs(builder => builder
-        .AddDurableTaskInTestHub()
-        .AddDurableTaskInTestHub(options => options.MaxQueuePollingInterval = TimeSpan.FromSeconds(2))
+        .AddDurableTask(options => options.HubName = nameof(MyTestFunction))
         .AddAzureStorageCoreServices()
     .Build();
 ```
 
-## Managing Durable Tasks
+*BREAKING:* In `v2.1` I removed the `AddDurableTaskInTestHub()` method. You can easily do it yourself with
+ `AddDurableTask(options => ...)` and be more specific about the context of your test. This way you don't 
+ end up with hundreds of empty history and instance tables in your storage account.
+
+### Start Clean
+
+```c#
+await jobs
+    .Terminate()
+    .Purge();
+```
+
+To cleanup from previous runs you cleanup the history by terminating leftover orchestrations
+and purging the history.
+
+### Wait
 
 ```c#
 await jobs
@@ -192,24 +206,12 @@ await jobs
     .Purge();
 ```
 
-*BREAKING:* In `v2` the `WaitForOrchestrationsCompletion` is replaced with `Wait().ThrowIfFailed().Purge()`.
-
-### Ready
-
-Invoke function to monitor orchestrations status and wait for all to complete.
-
-### Throw if Failed
- 
-Invoke function to validate if all orchestrations succeeded.
-
-### Purge
-
-Invoke function to purge the history of current execution.
+*BREAKING:* In `v2` the `WaitForOrchestrationsCompletion` is broken down into `Wait()`, `ThrowIfFailed()` and `Purge()`.
 
 ## Azure Storage Account
 
 You need an azure storage table to store the state of the durable functions.
-The only two options currenty are [Azure](#option-1-azure) and the [Azure Storage Emulator](#option-2-azure-storage-emulator).
+The only two options currently are [Azure](#option-1-azure) and the [Azure Storage Emulator](#option-2-azure-storage-emulator).
 
 ### Option 1: Azure
 

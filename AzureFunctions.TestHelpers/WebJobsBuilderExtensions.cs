@@ -12,12 +12,5 @@ namespace AzureFunctions.TestHelpers
             configure(builder.Services);
             return builder;
         }
-
-        public static IWebJobsBuilder AddDurableTaskInTestHub(this IWebJobsBuilder builder, Action<DurableTaskOptions> configure = null) =>
-            builder.AddDurableTask(options =>
-            {
-                configure?.Invoke(options);
-                options.HubName = $"test{DateTime.Now:yyyyMMddTHHmmss}";
-            });
     }
 }

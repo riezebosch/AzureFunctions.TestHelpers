@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using AzureFunctions.TestHelpers.Starters;
 using FluentAssertions;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Timers;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
@@ -26,7 +26,11 @@ namespace AzureFunctions.TestHelpers.Tests
             Mock = Substitute.For<IInjectable>();
             _host = new HostBuilder()
                 .ConfigureWebJobs(builder => builder
-                    .AddDurableTaskInTestHub(options => options.MaxQueuePollingInterval = TimeSpan.FromSeconds(2))
+                    .AddDurableTask(options =>
+                    {
+                        options.HubName = nameof(DurableFunctionsHelper);
+                        options.MaxQueuePollingInterval = TimeSpan.FromSeconds(2);
+                    })
                     .AddAzureStorageCoreServices()
                     .ConfigureServices(services => services.AddSingleton(Mock)))
                 .Build();
