@@ -25,7 +25,6 @@ namespace AzureFunctions.TestHelpers.Tests
             Mock = Substitute.For<IInjectable>();
             _host = new HostBuilder()
                 .ConfigureWebJobs(builder => builder
-                    .AddTimers()
                     .AddDurableTaskInTestHub(options => options.MaxQueuePollingInterval = TimeSpan.FromSeconds(2))
                     .AddAzureStorageCoreServices()
                     .ConfigureServices(services => services.AddSingleton(Mock)))
@@ -48,10 +47,15 @@ namespace AzureFunctions.TestHelpers.Tests
         {
             _host = host;
         }
+        
         [Fact]
         public async Task Ready()
         {
             // Arrange
+            _host.Mock
+                .When(x => x.Execute())
+                .Do(x => Thread.Sleep(15000)); // waiting long enough to let the failure orchestration kick in (when enabled).
+
             var jobs = _host.Jobs;
 
             // Act

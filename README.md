@@ -120,7 +120,6 @@ public static async Task DurableFunction()
     var mock = Substitute.For<IInjectable>();
     using (var host = new HostBuilder()
         .ConfigureWebJobs(builder => builder
-            .AddTimers()
             .AddDurableTaskInTestHub()
             .AddAzureStorageCoreServices()
             .ConfigureServices(services => services.AddSingleton(mock)))
@@ -149,6 +148,26 @@ public static async Task DurableFunction()
 ```
 
 You'll have to [configure Azure WebJobs Storage](#azure-storage-account) to be able to run durable functions!
+
+### Time Triggered Functions
+
+Do NOT add _timers_ to the web jobs host!
+
+ ```c#
+using (var host = new HostBuilder()
+        .ConfigureWebJobs(builder => builder
+            //.AddTimers() <-- DON'T ADD TIMERS
+            .AddDurableTaskInTestHub()
+            .AddAzureStorageCoreServices()
+            .ConfigureServices(services => services.AddSingleton(mock)))
+        .Build())
+    {
+    }
+}
+```
+
+It turns out it is not required to invoke time triggered functions, and by doing so 
+your functions will be triggered randomly messing up the status of your orchestration instances.
 
 ### Add Durable Task in TestHub
 
