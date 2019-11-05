@@ -19,9 +19,9 @@ namespace AzureFunctions.TestHelpers
 
         public override HttpContext HttpContext { get; }
         public override string Method { get; set; } = "Get";
-        public override string Scheme { get; set; }
+        public override string Scheme { get; set; } = "http";
         public override bool IsHttps { get; set; }
-        public override HostString Host { get; set; }
+        public override HostString Host { get; set; } = new HostString("dummy");
         public override PathString PathBase { get; set; }
         public override PathString Path { get; set; }
         public override QueryString QueryString { get; set; }
