@@ -17,7 +17,7 @@ namespace AzureFunctions.TestHelpers
             builder.AddDurableTask(options =>
             {
                 configure?.Invoke(options);
-                options.HubName = $"test{Guid.NewGuid():N}";
+                options.HubName = $"test{DateTime.Now:yyyyMMddTHHmmss}";
             });
     }
 }
