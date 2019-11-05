@@ -14,30 +14,45 @@ using Xunit;
 
 namespace AzureFunctions.TestHelpers.Tests
 {
-    public class DurableFunctionsHelpers : IDisposable
+    public class HostFixture : IDisposable
     {
-        private readonly IInjectable _mock;
+        public IInjectable Mock { get; }
         private readonly IHost _host;
+        public IJobHost Jobs => _host.Services.GetService<IJobHost>();
 
-        public DurableFunctionsHelpers()
+        public HostFixture()
         {
-            _mock = Substitute.For<IInjectable>();
+            Mock = Substitute.For<IInjectable>();
             _host = new HostBuilder()
                 .ConfigureWebJobs(builder => builder
                     .AddTimers()
                     .AddDurableTaskInTestHub(options => options.MaxQueuePollingInterval = TimeSpan.FromSeconds(2))
                     .AddAzureStorageCoreServices()
-                    .ConfigureServices(services => services.AddSingleton(_mock)))
+                    .ConfigureServices(services => services.AddSingleton(Mock)))
                 .Build();
-            
+
             _host.StartAsync().ConfigureAwait(false).GetAwaiter().GetResult();
         }
+        
+        public void Dispose()
+        {
+            _host.Dispose();
+        }
+    }
 
+    public class DurableFunctionsHelper : IClassFixture<HostFixture>
+    {
+        private readonly HostFixture _host;
+
+        public DurableFunctionsHelper(HostFixture host)
+        {
+            _host = host;
+        }
         [Fact]
         public async Task Ready()
         {
             // Arrange
-            var jobs = _host.Services.GetService<IJobHost>();
+            var jobs = _host.Jobs;
 
             // Act
             await jobs.CallAsync(nameof(Starter), new Dictionary<string, object>
@@ -51,7 +66,7 @@ namespace AzureFunctions.TestHelpers.Tests
                 .Purge();
 
             // Assert
-            _mock
+            _host.Mock
                 .Received()
                 .Execute();
         }
@@ -60,11 +75,11 @@ namespace AzureFunctions.TestHelpers.Tests
         public async Task WaitWithTimeout()
         {
             // Arrange
-            _mock
+            _host.Mock
                 .When(x => x.Execute())
                 .Do(x => Thread.Sleep(60000));
 
-            var jobs = _host.Services.GetService<IJobHost>();
+            var jobs = _host.Jobs;
 
             // Act
             await jobs.CallAsync(nameof(Starter), new Dictionary<string, object>
@@ -77,7 +92,7 @@ namespace AzureFunctions.TestHelpers.Tests
                 .Throw<TaskCanceledException>();
 
             // Assert
-            _mock.Received()
+            _host.Mock.Received()
                 .Execute();
         }
 
@@ -85,11 +100,11 @@ namespace AzureFunctions.TestHelpers.Tests
         public async Task WaitDoesNotThrow()
         {
             // Arrange
-            _mock
+            _host.Mock
                 .When(x => x.Execute())
                 .Do(x => throw new InvalidOperationException());
 
-            var jobs = _host.Services.GetService<IJobHost>();
+            var jobs = _host.Jobs;
 
             // Act
             await jobs.CallAsync(nameof(Starter), new Dictionary<string, object>
@@ -102,7 +117,7 @@ namespace AzureFunctions.TestHelpers.Tests
                 .Purge();
 
             // Assert
-            _mock.Received()
+            _host.Mock.Received()
                 .Execute();
         }
 
@@ -110,11 +125,11 @@ namespace AzureFunctions.TestHelpers.Tests
         public async Task ThrowIfFailed()
         {
             // Arrange
-            _mock
+            _host.Mock
                 .When(x => x.Execute())
                 .Do(x => throw new InvalidOperationException());
 
-            var jobs = _host.Services.GetService<IJobHost>();
+            var jobs = _host.Jobs;
 
             // Act
             await jobs.CallAsync(nameof(Starter), new Dictionary<string, object>
@@ -132,11 +147,6 @@ namespace AzureFunctions.TestHelpers.Tests
             await jobs
                 .Ready()
                 .Purge();
-        }
-
-        public void Dispose()
-        {
-            _host.Dispose();
         }
     }
 }
