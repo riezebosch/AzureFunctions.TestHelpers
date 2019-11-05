@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using NSubstitute;
+using NSubstitute.ClearExtensions;
 using Xunit;
 
 namespace AzureFunctions.TestHelpers.Tests
@@ -46,6 +47,7 @@ namespace AzureFunctions.TestHelpers.Tests
         public DurableFunctionsHelper(HostFixture host)
         {
             _host = host;
+            _host.Mock.ClearSubstitute();
         }
         
         [Fact]
@@ -91,13 +93,14 @@ namespace AzureFunctions.TestHelpers.Tests
                 ["timerInfo"] = new TimerInfo(new WeeklySchedule(), new ScheduleStatus())
             });
 
+            // Act & Assert
             jobs.Invoking(async x => await x.Ready(TimeSpan.FromSeconds(20)))
                 .Should()
                 .Throw<TaskCanceledException>();
 
-            // Assert
-            _host.Mock.Received()
-                .Execute();
+            await jobs
+                .Terminate()
+                .Purge();
         }
 
         [Fact]
@@ -151,6 +154,29 @@ namespace AzureFunctions.TestHelpers.Tests
             await jobs
                 .Ready()
                 .Purge();
+        }
+        
+        [Fact]
+        public async Task Terminate()
+        {
+            // Arrange
+            _host.Mock
+                .When(x => x.Execute())
+                .Do(x => Thread.Sleep(60000));
+
+            var jobs = _host.Jobs;
+            await jobs.CallAsync(nameof(Starter), new Dictionary<string, object>
+            {
+                ["timerInfo"] = new TimerInfo(new WeeklySchedule(), new ScheduleStatus())
+            });
+
+            // Act
+            await jobs
+                .Terminate()
+                .Purge();
+
+            // Assert
+            await jobs.Ready();
         }
     }
 }

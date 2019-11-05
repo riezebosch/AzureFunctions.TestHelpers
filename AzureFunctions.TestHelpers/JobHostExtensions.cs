@@ -36,8 +36,18 @@ namespace AzureFunctions.TestHelpers
         public static async Task<IJobHost> Purge(this Task<IJobHost> task)
         {
             var jobs = await task;
+            await Task.Delay(TimeSpan.FromSeconds(1));
             await jobs.CallAsync(nameof(PurgeFunction));
             
+            return jobs;
+        }
+        
+        /// <summary>
+        /// Terminates all orchestrations. 
+        /// </summary>
+        public static async Task<IJobHost> Terminate(this IJobHost jobs)
+        {
+            await jobs.CallAsync(nameof(TerminateFunction));
             return jobs;
         }
     }
