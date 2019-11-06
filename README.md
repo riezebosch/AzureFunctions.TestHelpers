@@ -208,10 +208,10 @@ await jobs
 
 *BREAKING:* In `v2` the `WaitForOrchestrationsCompletion` is broken down into `Wait()`, `ThrowIfFailed()` and `Purge()`.
 
-### Reuse the Host with a Fixture
+### Reuse
 
-When injecting a configured host into your test make sure **you do NOT initialize and clean it
-in the constructor**. For example, when using `xUnit` you should use the [`IAsyncLifetime`](https://github.com/xunit/xunit/blob/master/src/xunit.core/IAsyncLifetime.cs)
+When injecting a configured host into your test make sure **you do NOT initialize nor clean it
+in the constructor**. For example, when using `xUnit` you use the [`IAsyncLifetime`](https://github.com/xunit/xunit/blob/master/src/xunit.core/IAsyncLifetime.cs)
 for that, otherwise your test will probably hang forever.
 
 Initialize and start the host in a fixture:
@@ -260,6 +260,11 @@ public class MyTest : IClassFixture<HostFixture>, IAsyncLifetime
         Task.CompletedTask;
 }
 ```
+
+But please, don't to do a `ConfigureAwait(false).GetAwaiter().GetResult()`.
+> Using ConfigureAwait(false) to avoid deadlocks is a dangerous practice. You would have to use ConfigureAwait(false) for every await in the transitive closure of all methods called by the blocking code, including all third- and second-party code. Using ConfigureAwait(false) to avoid deadlock is at best just a hack).
+
+[Don’t block on async code](https://blog.stephencleary.com/2012/07/dont-block-on-async-code.html).
 
 ## Azure Storage Account
 
