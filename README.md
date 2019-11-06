@@ -208,18 +208,10 @@ await jobs
 
 *BREAKING:* In `v2` the `WaitForOrchestrationsCompletion` is broken down into `Wait()`, `ThrowIfFailed()` and `Purge()`.
 
-### Tips on Reusing the Host
+### Reuse the Host with a Fixture
 
-You may speed up tests by reusing a configured host. There are a couple of things you need to be aware of:
-
-#### Isolate
-
-Make sure you specify a [different `HubName`](#isolate-durable-functions) for tests that run in parallel.
-
-#### Await Initialization and Cleanup
-
-When injecting a configured host into your test make sure you do not initialize and clean it
-in the constructor. For example, when using `xUnit` you should use the [`IAsyncLifetime`](https://github.com/xunit/xunit/blob/master/src/xunit.core/IAsyncLifetime.cs)
+When injecting a configured host into your test make sure **you do NOT initialize and clean it
+in the constructor**. For example, when using `xUnit` you should use the [`IAsyncLifetime`](https://github.com/xunit/xunit/blob/master/src/xunit.core/IAsyncLifetime.cs)
 for that, otherwise your test will probably hang forever.
 
 Initialize and start the host in a fixture:
@@ -251,11 +243,11 @@ public class HostFixture : IDisposable, IAsyncLifetime
 Inject and cleanup the host in the test class:
 
 ```c#
-public class Test : IClassFixture<HostFixture>, IAsyncLifetime
+public class MyTest : IClassFixture<HostFixture>, IAsyncLifetime
 {
     private readonly HostFixture _host;
 
-    public DurableFunctionsHelper(HostFixture host) =>
+    public MyTest(HostFixture host) =>
         _host = host;
 
     public Task InitializeAsync() => 
