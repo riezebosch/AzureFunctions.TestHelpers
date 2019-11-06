@@ -8,7 +8,6 @@ namespace AzureFunctions.TestHelpers
     {
         public void Configure(IWebJobsBuilder builder)
         {
-            builder.Services.AddSingleton<IInjectable, Injectable>();
         }
     }
 }

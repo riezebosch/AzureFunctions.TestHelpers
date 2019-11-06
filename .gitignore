@@ -5,3 +5,5 @@ bin/
 .vscode/
 *.DotSettings.user 
 .DS_Store
+coverage.opencover.xml
+reports/
