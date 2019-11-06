@@ -186,7 +186,7 @@ host = new HostBuilder()
  `AddDurableTask(options => ...)` and be more specific about the context of your test. This way you don't 
  end up with hundreds of empty history and instance tables in your storage account.
 
-### Start Clean
+### Cleanup
 
 ```c#
 await jobs
@@ -207,6 +207,67 @@ await jobs
 ```
 
 *BREAKING:* In `v2` the `WaitForOrchestrationsCompletion` is broken down into `Wait()`, `ThrowIfFailed()` and `Purge()`.
+
+### Tips on Reusing the Host
+
+You may speed up tests by reusing a configured host. There are a couple of things you need to be aware of:
+
+#### Isolate
+
+Make sure you specify a [different `HubName`](#isolate-durable-functions) for tests that run in parallel.
+
+#### Await Initialization and Cleanup
+
+When injecting a configured host into your test make sure you do not initialize and clean it
+in the constructor. For example, when using `xUnit` you should use the [`IAsyncLifetime`](https://github.com/xunit/xunit/blob/master/src/xunit.core/IAsyncLifetime.cs)
+for that, otherwise your test will probably hang forever.
+
+Initialize and start the host in a fixture:
+
+```c#
+public class HostFixture : IDisposable, IAsyncLifetime
+{
+    private readonly IHost _host;
+    public IJobHost Jobs => _host.Services.GetService<IJobHost>();
+
+    public HostFixture() =>
+        _host = new HostBuilder()
+            .ConfigureWebJobs(builder => builder
+                .AddDurableTask(options => options.HubName = nameof(MyTest))
+                .AddAzureStorageCoreServices())
+            .Build();
+
+    public void Dispose() => 
+        _host.Dispose();
+
+    public Task InitializeAsync() => 
+        _host.StartAsync();
+
+    public Task DisposeAsync() => 
+        Task.CompletedTask;
+}
+```
+
+Inject and cleanup the host in the test class:
+
+```c#
+public class Test : IClassFixture<HostFixture>, IAsyncLifetime
+{
+    private readonly HostFixture _host;
+
+    public DurableFunctionsHelper(HostFixture host) =>
+        _host = host;
+
+    public Task InitializeAsync() => 
+        _host
+            .Jobs
+            .Terminate()
+            .Purge();
+
+    public Task DisposeAsync() => 
+        Task.CompletedTask;
+}
+```
 
 ## Azure Storage Account
 
@@ -236,7 +297,7 @@ The storage connection string setting [is required](https://docs.microsoft.com/e
 
 Set the environment variable `AzureWebJobsStorage`. Hereby you can also overwrite the configured connection from [option 2](#option-2-from-a-configuration-file) on your local dev machine.
 
-#### Option 2: from a configuration file
+#### Option 2: with a configuration file
 
 Include an `appsettings.json` in your test project:
 
@@ -250,8 +311,10 @@ and make sure it is copied to the output directory:
 
 ```xml
 <ItemGroup>
-    <None Include="appsettings.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Content Include="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
 </ItemGroup>
 ```
+
+---
+
+Happy coding!

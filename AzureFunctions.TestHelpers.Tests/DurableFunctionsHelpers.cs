@@ -15,36 +15,7 @@ using Xunit;
 
 namespace AzureFunctions.TestHelpers.Tests
 {
-    public class HostFixture : IDisposable
-    {
-        public IInjectable Mock { get; }
-        private readonly IHost _host;
-        public IJobHost Jobs => _host.Services.GetService<IJobHost>();
-
-        public HostFixture()
-        {
-            Mock = Substitute.For<IInjectable>();
-            _host = new HostBuilder()
-                .ConfigureWebJobs(builder => builder
-                    .AddDurableTask(options =>
-                    {
-                        options.HubName = nameof(DurableFunctionsHelper);
-                        options.MaxQueuePollingInterval = TimeSpan.FromSeconds(2);
-                    })
-                    .AddAzureStorageCoreServices()
-                    .ConfigureServices(services => services.AddSingleton(Mock)))
-                .Build();
-
-            _host.StartAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-        }
-        
-        public void Dispose()
-        {
-            _host.Dispose();
-        }
-    }
-
-    public class DurableFunctionsHelper : IClassFixture<HostFixture>
+    public class DurableFunctionsHelper : IClassFixture<DurableFunctionsHelper.HostFixture>
     {
         private readonly HostFixture _host;
 
@@ -181,6 +152,34 @@ namespace AzureFunctions.TestHelpers.Tests
 
             // Assert
             await jobs.Ready();
+        }
+        
+        public class HostFixture : IDisposable, IAsyncLifetime
+        {
+            public IInjectable Mock { get; }
+            private readonly IHost _host;
+            public IJobHost Jobs => _host.Services.GetService<IJobHost>();
+
+            public HostFixture()
+            {
+                Mock = Substitute.For<IInjectable>();
+                _host = new HostBuilder()
+                    .ConfigureWebJobs(builder => builder
+                        .AddDurableTask(options =>
+                        {
+                            options.HubName = nameof(DurableFunctionsHelper);
+                            options.MaxQueuePollingInterval = TimeSpan.FromSeconds(2);
+                        })
+                        .AddAzureStorageCoreServices()
+                        .ConfigureServices(services => services.AddSingleton(Mock)))
+                    .Build();
+            }
+        
+            public void Dispose() => _host.Dispose();
+
+            public Task InitializeAsync() => _host.StartAsync();
+
+            public Task DisposeAsync() => Task.CompletedTask;
         }
     }
 }
