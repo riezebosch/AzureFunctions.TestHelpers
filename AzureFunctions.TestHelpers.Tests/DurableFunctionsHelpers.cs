@@ -165,11 +165,7 @@ namespace AzureFunctions.TestHelpers.Tests
                 Mock = Substitute.For<IInjectable>();
                 _host = new HostBuilder()
                     .ConfigureWebJobs(builder => builder
-                        .AddDurableTask(options =>
-                        {
-                            options.HubName = nameof(DurableFunctionsHelper);
-                            options.MaxQueuePollingInterval = TimeSpan.FromSeconds(2);
-                        })
+                        .AddDurableTask(options => options.HubName = nameof(DurableFunctionsHelper))
                         .AddAzureStorageCoreServices()
                         .ConfigureServices(services => services.AddSingleton(Mock)))
                     .Build();

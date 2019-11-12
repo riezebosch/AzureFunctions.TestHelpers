@@ -1,15 +1,13 @@
-using System;
-using System.Linq;
 using System.Threading.Tasks;
-using DurableTask.Core;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 
 namespace AzureFunctions.TestHelpers
 {
     public static class TerminateFunction
     {
         [FunctionName(nameof(TerminateFunction))]
-        public static async Task Run([OrchestrationClient]DurableOrchestrationClientBase client)
+        public static async Task Run([DurableClient]IDurableOrchestrationClient client)
         {
             var orchestrations = await client.GetStatusAsync();
             foreach (var orchestration in orchestrations)

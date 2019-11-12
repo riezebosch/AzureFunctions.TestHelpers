@@ -7,9 +7,9 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Http" Version="[2.2,3)" />
-        <PackageReference Include="Microsoft.Azure.WebJobs" Version="[3,4)" />
-        <PackageReference Include="Microsoft.Azure.WebJobs.Core" Version="3.0.14" />
-        <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="[1.8,2)" />
+        <PackageReference Include="Microsoft.Azure.WebJobs" Version="[3.0.14,4)" />
+        <PackageReference Include="Microsoft.Azure.WebJobs.Core" Version="[3.0.14,4)" />
+        <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="[2.0.0,3)" />
     </ItemGroup>
 
     <PropertyGroup>
@@ -17,7 +17,7 @@
         <NeutralLanguage>en-US</NeutralLanguage>
         <AssemblyTitle>AzureFunctions.TestHelpers</AssemblyTitle>
         <Description>Spin up integration tests on your Azure Functions!</Description>
-        <PackageReleaseNotes>Wait, ThrowIfFailed and Purge separated.</PackageReleaseNotes>
+        <PackageReleaseNotes>Upgrade to durable task v2</PackageReleaseNotes>
         <PackageTags>azure;functions;serverless;integration;testing;tdd</PackageTags>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <RepositoryType>git</RepositoryType>

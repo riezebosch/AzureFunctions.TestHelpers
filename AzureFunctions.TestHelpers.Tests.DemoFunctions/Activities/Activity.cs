@@ -1,4 +1,5 @@
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 
 namespace AzureFunctions.TestHelpers.Activities
 {
@@ -12,6 +13,6 @@ namespace AzureFunctions.TestHelpers.Activities
         }
 
         [FunctionName(nameof(Activity))]
-        public void Run([ActivityTrigger]DurableActivityContextBase context) => _injectable.Execute();
+        public void Run([ActivityTrigger]IDurableOrchestrationClient context) => _injectable.Execute();
     }
 }

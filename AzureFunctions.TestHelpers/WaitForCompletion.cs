@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 
 namespace AzureFunctions.TestHelpers
 {
@@ -10,7 +11,7 @@ namespace AzureFunctions.TestHelpers
     {
         [FunctionName(nameof(WaitForCompletion))]
         [NoAutomaticTrigger]
-        public static async Task Run([OrchestrationClient]DurableOrchestrationClientBase client, TimeSpan? timeout)
+        public static async Task Run([DurableClient]IDurableOrchestrationClient client, TimeSpan? timeout)
         {
             using (var cts = new CancellationTokenSource())
             {
@@ -19,7 +20,7 @@ namespace AzureFunctions.TestHelpers
             }
         }
 
-        private static async Task Wait(DurableOrchestrationClientBase client, CancellationToken token)
+        private static async Task Wait(IDurableOrchestrationClient client, CancellationToken token)
         {
             while (!token.IsCancellationRequested)
             {
