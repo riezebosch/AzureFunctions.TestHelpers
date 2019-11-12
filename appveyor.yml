@@ -23,7 +23,7 @@ build:
   publish_nuget: true
   verbosity: minimal
 after_test:
-  bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash)
 deploy:
 - provider: NuGet
   api_key:
