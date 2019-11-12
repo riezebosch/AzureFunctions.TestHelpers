@@ -1,11 +1,16 @@
 version: 3.0.{build}
 pull_requests:
   do_not_increment_build_number: true
-image: Previous Ubuntu1804
+image: Ubuntu1804
 only_commits:
   files:
     - AzureFunctions.TestHelpers/**/*
+    - appveyor.yml
 configuration: Release
+environment:
+  CODECOV_TOKEN: 00146f9e-ddb9-42e6-a357-fd0f0ec4438a
+  AzureWebJobsStorage:
+    secure: 8IK3x1NQkPW0v67xtLBrhkZzT+LUCM+JN9mhXsMfdMeeE8IqGxOdLi0gblAvIlsHu2/4E2lL46wzz2jokxJBTlySMOSuzDjQi8yaY7N0GArbVGSXAyAFEmWLpI3FHBMF6Qv2y3dWO4li8XgIWR7wPygv2wDowVr+/ap70gMiAMHAVySFbkSyEW5nfaKyMLA7UQGtdqvI3QwHSqZgcy49pWVlHPcW1i+K76cQq5ia6lbX7UgWJCspXqgLJLGpOHBhiNsaZfyMFY9z+K9J0vCZpw==
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
@@ -25,7 +30,3 @@ deploy:
     secure: C1XWdllP3h983mIvodvqrSkPTgZygNPPGjB/p9+bWzvIpQsaS2D1I3/HxqE/2rwS
   on:
     branch: master
-environment:
-  AzureWebJobsStorage:
-    secure: 8IK3x1NQkPW0v67xtLBrhkZzT+LUCM+JN9mhXsMfdMeeE8IqGxOdLi0gblAvIlsHu2/4E2lL46wzz2jokxJBTlySMOSuzDjQi8yaY7N0GArbVGSXAyAFEmWLpI3FHBMF6Qv2y3dWO4li8XgIWR7wPygv2wDowVr+/ap70gMiAMHAVySFbkSyEW5nfaKyMLA7UQGtdqvI3QwHSqZgcy49pWVlHPcW1i+K76cQq5ia6lbX7UgWJCspXqgLJLGpOHBhiNsaZfyMFY9z+K9J0vCZpw==
-  CODECOV_TOKEN: 00146f9e-ddb9-42e6-a357-fd0f0ec4438a
