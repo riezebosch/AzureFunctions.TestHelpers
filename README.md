@@ -57,9 +57,10 @@ public static async Task HttpTriggeredFunctionWithDependencyReplacement()
 }
 ```
 
-### Dummy HTTP Request
+### HTTP Request
 
-Because you can't invoke an HTTP-triggered function without a request you can now use a `DummyHttpRequest`.
+Because you can't invoke an HTTP-triggered function without a request, and I couldn't find one
+in the standard libraries, I created the `DummyHttpRequest`.
 
 ```c#
 await jobs.CallAsync(nameof(DemoInjection), new Dictionary<string, object>
@@ -68,20 +69,20 @@ await jobs.CallAsync(nameof(DemoInjection), new Dictionary<string, object>
 });
 ```
 
-You can also set all kinds of regular settings on the request when needed:
+You can set all kinds of regular settings on the request when needed:
 
 ```c#
 var request = new DummyHttpRequest
 {
     Scheme = "http",
-    Host = new HostString("dummy"),
+    Host = new HostString("some-other"),
     Headers = {["Authorization"] = $"Bearer {token}"}
 };
 ```
 
 ### HTTP Response
 
-You capture the result(s) of http-triggered functions via the `options.SetResponse` 
+To capture the result(s) of http-triggered functions you use the `options.SetResponse` 
 callback on the `AddHttp` extension method:
 
 ```c#
@@ -110,7 +111,7 @@ response
 
 ## Durable Functions
 
-Invoke a time-triggered durable function:
+Invoke a (time-triggered) durable function:
 
 ```c#
 [Fact]
@@ -127,6 +128,9 @@ public static async Task DurableFunction()
     {
         await host.StartAsync();
         var jobs = host.Services.GetService<IJobHost>();
+        await jobs.
+            Terminate()
+            .Purge();
 
         // Act
         await jobs.CallAsync(nameof(Starter), new Dictionary<string, object>
@@ -147,7 +151,7 @@ public static async Task DurableFunction()
 }
 ```
 
-You'll have to [configure Azure WebJobs Storage](#azure-storage-account) to be able to run durable functions!
+You'll have to [configure Azure WebJobs Storage](#azure-storage-account) to run durable functions!
 
 ### Time Triggered Functions
 
