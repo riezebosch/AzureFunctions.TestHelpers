@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
@@ -10,7 +11,7 @@ namespace AzureFunctions.TestHelpers
         public static async Task Run([DurableClient]IDurableOrchestrationClient client)
         {
             var orchestrations = await client.GetStatusAsync();
-            foreach (var orchestration in orchestrations)
+            foreach (var orchestration in orchestrations.Where(x => !x.RuntimeStatus.IsReady()))
             {
                 await client.TerminateAsync(orchestration.InstanceId, "just cleaning.");
             }

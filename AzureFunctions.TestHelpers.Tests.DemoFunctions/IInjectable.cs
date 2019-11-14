@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
+
 namespace AzureFunctions.TestHelpers
 {
     public interface IInjectable
     {
-        void Execute();
+        Task Execute(string message);
     }
 }

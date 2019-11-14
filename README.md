@@ -3,12 +3,20 @@
 
 # AzureFunctions.TestHelpers ⚡
 
-Host and invoke Azure Functions from a test by combining the bits and pieces of
+Test your Azure Functions! Spin up integration tests. By combining bits and pieces of
 the [WebJobs SDK](https://docs.microsoft.com/en-us/azure/app-service/webjobs-sdk-how-to),
 [Azure Functions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-overview)
 and [Durable Functions](https://docs.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-concepts)
 and adding some convenience classes and extension methods on top.
 
+You'll ❤ the feedback!
+
+## Updates
+
+* v3.1: [WaitFor](#waitfor) to better support durable entities
+* v3.0: Upgrade to durable task v2
+* v2.1: Removed AddDurableTaskInTestHub
+* v2.0: Wait, ThrowIfFailed and Purge separated.
 
 ## Configure Services for Dependency Injection
 
@@ -23,6 +31,8 @@ host = new HostBuilder()
 
 Register and replace services that are injected into your functions.
 Include `Microsoft.Azure.Functions.Extensions` in your test project to [enable dependency injection](https://docs.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection)!
+
+*Note:* Not sure if this is still a requirement for `Azure Functions >= v2.0`.
 
 ## HTTP Triggered Functions
 
@@ -44,7 +54,7 @@ public static async Task HttpTriggeredFunctionWithDependencyReplacement()
         var jobs = host.Services.GetService<IJobHost>();
 
         // Act
-        await jobs.CallAsync(nameof(DemoInjection), new Dictionary<string, object>
+        await jobs.CallAsync(nameof(DemoHttpFunction), new Dictionary<string, object>
         {
             ["request"] = new DummyHttpRequest()
         });
@@ -97,7 +107,7 @@ using (var host = new HostBuilder()
     var jobs = host.Services.GetService<IJobHost>();
 
     // Act
-    await jobs.CallAsync(nameof(DemoInjection), new Dictionary<string, object>
+    await jobs.CallAsync(nameof(DemoHttpFunction), new Dictionary<string, object>
     {
         ["request"] = new DummyHttpRequest()
     });
@@ -133,13 +143,13 @@ public static async Task DurableFunction()
             .Purge();
 
         // Act
-        await jobs.CallAsync(nameof(Starter), new Dictionary<string, object>
+        await jobs.CallAsync(nameof(DemoStarter), new Dictionary<string, object>
         {
             ["timerInfo"] = new TimerInfo(new WeeklySchedule(), new ScheduleStatus())
         });
 
         await jobs
-            .Ready()
+            .WaitFor(nameof(DemoOrchestration))
             .ThrowIfFailed()
             .Purge();
 
@@ -170,8 +180,8 @@ using (var host = new HostBuilder()
 }
 ```
 
-It turns out it is not required to invoke time triggered functions, and by doing so 
-your functions will be triggered randomly messing up the status of your orchestration instances.
+It turns out it is not required to invoke time-triggered functions, and by doing so 
+your functions will be triggered randomly, messing up the status of your orchestration instances.
 
 ### Isolate Durable Functions
 
@@ -187,7 +197,7 @@ host = new HostBuilder()
 ```
 
 *BREAKING:* In `v2.1` I removed the `AddDurableTaskInTestHub()` method. You can easily do it yourself with
- `AddDurableTask(options => ...)` and be more specific about the context of your test. This way you don't 
+ `AddDurableTask(options => ...)` and be more specific about the context of your test. This way, you don't 
  end up with hundreds of empty history and instance tables in your storage account.
 
 ### Cleanup
@@ -198,23 +208,36 @@ await jobs
     .Purge();
 ```
 
-To cleanup from previous runs you cleanup the history by terminating leftover orchestrations
-and purging the history.
+To cleanup from previous runs, you terminate leftover orchestrations
+and durable entities and purge the history.
 
-### Wait
+### WaitFor
+
+```c#
+await jobs
+    .WaitFor(nameof(DemoOrchestration), TimeSpan.FromSeconds(30))
+    .ThrowIfFailed();
+```
+
+With the `WaitFor` you specify what orchestration you want to wait for. This is a necessity with
+the introduction of durable entities because these also store state in the same table and will 
+always be in a running state.
+
+### Ready
 
 ```c#
 await jobs
     .Ready(TimeSpan.FromSeconds(30))
-    .ThrowIfFailed()
-    .Purge();
+    .ThrowIfFailed();
 ```
+
+The `Ready` function is handy if you want to wait for termination or don't use durable entities.
 
 *BREAKING:* In `v2` the `WaitForOrchestrationsCompletion` is broken down into `Wait()`, `ThrowIfFailed()` and `Purge()`.
 
 ### Reuse
 
-When injecting a configured host into your test make sure **you do NOT initialize nor clean it
+When injecting a configured host into your test, make sure **you do NOT initialize nor clean it
 in the constructor**. For example, when using `xUnit` you use the [`IAsyncLifetime`](https://github.com/xunit/xunit/blob/master/src/xunit.core/IAsyncLifetime.cs)
 for that, otherwise your test will probably hang forever.
 
@@ -255,8 +278,7 @@ public class MyTest : IClassFixture<HostFixture>, IAsyncLifetime
         _host = host;
 
     public Task InitializeAsync() => 
-        _host
-            .Jobs
+        _host.Jobs
             .Terminate()
             .Purge();
 

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using AzureFunctions.TestHelpers.Orchestrators;
 using AzureFunctions.TestHelpers.Starters;
 using FluentAssertions;
 using Microsoft.Azure.WebJobs;
@@ -15,7 +17,7 @@ using Xunit;
 
 namespace AzureFunctions.TestHelpers.Tests
 {
-    public class DurableFunctionsHelper : IClassFixture<DurableFunctionsHelper.HostFixture>
+    public class DurableFunctionsHelper : IClassFixture<DurableFunctionsHelper.HostFixture>, IAsyncLifetime
     {
         private readonly HostFixture _host;
 
@@ -26,56 +28,52 @@ namespace AzureFunctions.TestHelpers.Tests
         }
         
         [Fact]
-        public async Task Ready()
+        public async Task WaitFor()
         {
             // Arrange
-            _host.Mock
-                .When(x => x.Execute())
-                .Do(x => Thread.Sleep(15000)); // waiting long enough to let the failure orchestration kick in (when enabled).
-
             var jobs = _host.Jobs;
 
             // Act
-            await jobs.CallAsync(nameof(Starter), new Dictionary<string, object>
+            await jobs.CallAsync(nameof(DemoStarter), new Dictionary<string, object>
             {
                 ["timerInfo"] = new TimerInfo(new WeeklySchedule(), new ScheduleStatus())
             });
 
             await jobs
-                .Ready()
+                .WaitFor(nameof(DemoOrchestration))
                 .ThrowIfFailed()
                 .Purge();
 
             // Assert
-            _host.Mock
+            await _host.Mock
                 .Received()
-                .Execute();
+                .Execute("from an activity");
+            
+            await _host.Mock
+                .Received()
+                .Execute("from an entity");
         }
 
         [Fact]
-        public async Task WaitWithTimeout()
+        public async Task WaitForTimeout()
         {
             // Arrange
             _host.Mock
-                .When(x => x.Execute())
+                .When(x => x.Execute(Arg.Any<string>()))
                 .Do(x => Thread.Sleep(60000));
 
             var jobs = _host.Jobs;
 
             // Act
-            await jobs.CallAsync(nameof(Starter), new Dictionary<string, object>
+            await jobs.CallAsync(nameof(DemoStarter), new Dictionary<string, object>
             {
                 ["timerInfo"] = new TimerInfo(new WeeklySchedule(), new ScheduleStatus())
             });
 
             // Act & Assert
-            jobs.Invoking(async x => await x.Ready(TimeSpan.FromSeconds(20)))
+            jobs.Invoking(async x => await x.WaitFor(nameof(DemoOrchestration), TimeSpan.FromSeconds(20)))
                 .Should()
                 .Throw<TaskCanceledException>();
-
-            await jobs
-                .Terminate()
-                .Purge();
         }
 
         [Fact]
@@ -83,24 +81,23 @@ namespace AzureFunctions.TestHelpers.Tests
         {
             // Arrange
             _host.Mock
-                .When(x => x.Execute())
+                .When(x => x.Execute(Arg.Any<string>()))
                 .Do(x => throw new InvalidOperationException());
 
             var jobs = _host.Jobs;
-
-            // Act
-            await jobs.CallAsync(nameof(Starter), new Dictionary<string, object>
+            await jobs.CallAsync(nameof(DemoStarter), new Dictionary<string, object>
             {
                 ["timerInfo"] = new TimerInfo(new WeeklySchedule(), new ScheduleStatus())
             });
 
+            // Act
             await jobs
-                .Ready()
+                .WaitFor(nameof(DemoOrchestration))
                 .Purge();
 
             // Assert
-            _host.Mock.Received()
-                .Execute();
+            await _host.Mock.Received()
+                .Execute(Arg.Any<string>());
         }
 
         [Fact]
@@ -108,27 +105,23 @@ namespace AzureFunctions.TestHelpers.Tests
         {
             // Arrange
             _host.Mock
-                .When(x => x.Execute())
+                .When(x => x.Execute(Arg.Any<string>()))
                 .Do(x => throw new InvalidOperationException());
 
             var jobs = _host.Jobs;
 
             // Act
-            await jobs.CallAsync(nameof(Starter), new Dictionary<string, object>
+            await jobs.CallAsync(nameof(DemoStarter), new Dictionary<string, object>
             {
                 ["timerInfo"] = new TimerInfo(new WeeklySchedule(), new ScheduleStatus())
             });
             
             // Assert
             jobs.Invoking(x => x
-                    .Ready(TimeSpan.FromSeconds(20))
+                    .WaitFor(nameof(DemoOrchestration), TimeSpan.FromSeconds(20))
                     .ThrowIfFailed())
                 .Should()
                 .Throw<Exception>();
-
-            await jobs
-                .Ready()
-                .Purge();
         }
         
         [Fact]
@@ -136,11 +129,11 @@ namespace AzureFunctions.TestHelpers.Tests
         {
             // Arrange
             _host.Mock
-                .When(x => x.Execute())
-                .Do(x => Thread.Sleep(60000));
+                .When(x => x.Execute(Arg.Any<string>()))
+                .Do(x => Thread.Sleep(600000));
 
             var jobs = _host.Jobs;
-            await jobs.CallAsync(nameof(Starter), new Dictionary<string, object>
+            await jobs.CallAsync(nameof(DemoStarter), new Dictionary<string, object>
             {
                 ["timerInfo"] = new TimerInfo(new WeeklySchedule(), new ScheduleStatus())
             });
@@ -151,7 +144,11 @@ namespace AzureFunctions.TestHelpers.Tests
                 .Purge();
 
             // Assert
-            await jobs.Ready();
+            var sw = Stopwatch.StartNew();
+            await jobs.WaitFor(nameof(DemoOrchestration));
+            sw.Elapsed
+                .Should()
+                .BeLessThan(TimeSpan.FromMinutes(1));
         }
         
         public class HostFixture : IDisposable, IAsyncLifetime
@@ -173,9 +170,15 @@ namespace AzureFunctions.TestHelpers.Tests
         
             public void Dispose() => _host.Dispose();
 
-            public Task InitializeAsync() => _host.StartAsync();
+            public async Task InitializeAsync() => await _host.StartAsync();
 
             public Task DisposeAsync() => Task.CompletedTask;
         }
+
+        public Task InitializeAsync() =>  _host.Jobs
+            .Terminate()
+            .Purge();
+
+        public Task DisposeAsync() => InitializeAsync();
     }
 }

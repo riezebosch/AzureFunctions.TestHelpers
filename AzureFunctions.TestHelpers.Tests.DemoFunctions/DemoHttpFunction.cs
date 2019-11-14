@@ -5,19 +5,19 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 
 namespace AzureFunctions.TestHelpers
 {
-    public class DemoInjection
+    public class DemoHttpFunction
     {
         private readonly IInjectable _injectable;
 
-        public DemoInjection(IInjectable injectable)
+        public DemoHttpFunction(IInjectable injectable)
         {
             _injectable = injectable;
         }
         
-        [FunctionName(nameof(DemoInjection))]
+        [FunctionName(nameof(DemoHttpFunction))]
         public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, Route = "demo-injection")]HttpRequestMessage request)
         {
-            _injectable.Execute();
+            _injectable.Execute("from an http triggered function");
             return new OkResult();
         }
     }

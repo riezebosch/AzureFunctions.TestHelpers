@@ -31,15 +31,15 @@ namespace AzureFunctions.TestHelpers.Tests
                 var jobs = host.Services.GetService<IJobHost>();
                 
                 // Act
-                await jobs.CallAsync(nameof(DemoInjection), new Dictionary<string, object>
+                await jobs.CallAsync(nameof(DemoHttpFunction), new Dictionary<string, object>
                 {
                     ["request"] = new DummyHttpRequest()
                 });
                 
                 // Assert
-                mock
+                await mock
                     .Received()
-                    .Execute();
+                    .Execute("from an http triggered function");
 
                 response
                     .Should()
