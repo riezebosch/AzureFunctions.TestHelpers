@@ -153,13 +153,12 @@ namespace AzureFunctions.TestHelpers.Tests
         
         public class HostFixture : IDisposable, IAsyncLifetime
         {
-            public IInjectable Mock { get; }
             private readonly IHost _host;
             public IJobHost Jobs => _host.Services.GetService<IJobHost>();
+            public IInjectable Mock { get; } = Substitute.For<IInjectable>();
 
             public HostFixture()
             {
-                Mock = Substitute.For<IInjectable>();
                 _host = new HostBuilder()
                     .ConfigureWebJobs(builder => builder
                         .AddDurableTask(options => options.HubName = nameof(DurableFunctionsHelper))
