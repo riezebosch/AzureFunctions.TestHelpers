@@ -9,12 +9,17 @@ namespace AzureFunctions.TestHelpers
     internal static class DurableOrchestrationClientExtensions
     {
         public static async Task Wait(this IDurableOrchestrationClient client,
-            Func<IList<DurableOrchestrationStatus>, bool> until, CancellationToken token)
+            Func<IEnumerable<DurableOrchestrationStatus>, bool> until, CancellationToken token)
         {
             while (!token.IsCancellationRequested)
             {
-                var status = await client.GetStatusAsync(token);
-                if (until(status))
+                var instances = await client.ListInstancesAsync(new OrchestrationStatusQueryCondition
+                {
+                    RuntimeStatus = new[] { OrchestrationRuntimeStatus.Pending, OrchestrationRuntimeStatus.Running, OrchestrationRuntimeStatus.ContinuedAsNew }, 
+                    TaskHubNames = new[] { client.TaskHubName }
+                },  token);
+                
+                if (until(instances.DurableOrchestrationState))
                 {
                     break;
                 }

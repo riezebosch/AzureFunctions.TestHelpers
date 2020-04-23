@@ -10,6 +10,6 @@ namespace AzureFunctions.TestHelpers.Activities
         public Activity(IInjectable injectable) => _injectable = injectable;
 
         [FunctionName(nameof(Activity))]
-        public void Run([ActivityTrigger]IDurableOrchestrationClient context) => _injectable.Execute("from an activity");
+        public void Run([ActivityTrigger]IDurableActivityContext context) => _injectable.Execute("from an activity");
     }
 }

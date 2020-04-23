@@ -13,6 +13,7 @@ You'll ❤ the feedback!
 
 ## Updates
 
+* v3.2: Updated dependencies, Ready also ignored durable entities
 * v3.1: [WaitFor](#waitfor) to better support durable entities
 * v3.0: Upgrade to durable task v2
 * v2.1: Removed AddDurableTaskInTestHub
@@ -149,7 +150,7 @@ public static async Task DurableFunction()
         });
 
         await jobs
-            .WaitFor(nameof(DemoOrchestration))
+            .Ready()
             .ThrowIfFailed()
             .Purge();
 
@@ -219,9 +220,8 @@ await jobs
     .ThrowIfFailed();
 ```
 
-With the `WaitFor` you specify what orchestration you want to wait for. This is a necessity with
-the introduction of durable entities because these also store state in the same table and will 
-always be in a running state.
+With the `WaitFor` you specify what orchestration you want to wait for. 
+You can either use the [`Ready`](#ready) function if you just want all orchestrations to complete.
 
 ### Ready
 
@@ -231,7 +231,7 @@ await jobs
     .ThrowIfFailed();
 ```
 
-The `Ready` function is handy if you want to wait for termination or don't use durable entities.
+The `Ready` function is handy if you want to wait for termination.
 
 *BREAKING:* In `v2` the `WaitForOrchestrationsCompletion` is broken down into `Wait()`, `ThrowIfFailed()` and `Purge()`.
 

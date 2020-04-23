@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using AzureFunctions.TestHelpers.Orchestrators;
 using Microsoft.Azure.WebJobs;
@@ -12,7 +13,7 @@ namespace AzureFunctions.TestHelpers.Starters
             TimerInfo timerInfo,
             [DurableClient] IDurableOrchestrationClient orchestrationClient)
         {
-            await orchestrationClient.StartNewAsync(nameof(DemoOrchestration), null);
+            await orchestrationClient.StartNewAsync(nameof(DemoOrchestration), null, Guid.NewGuid());
         }
     }
 }

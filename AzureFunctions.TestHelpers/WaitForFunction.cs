@@ -13,11 +13,13 @@ namespace AzureFunctions.TestHelpers
         [NoAutomaticTrigger]
         public static async Task Run([DurableClient]IDurableOrchestrationClient client, string name, TimeSpan? timeout)
         {
-            using (var cts = new CancellationTokenSource())
+            using var cts = new CancellationTokenSource();
+            if (timeout != null)
             {
-                if (timeout != null) cts.CancelAfter(timeout.Value);
-                await client.Wait(status => status.Where(x => x.Name == name).All(x => x.RuntimeStatus.IsReady()), cts.Token);
+                cts.CancelAfter(timeout.Value);
             }
+            
+            await client.Wait(status => status.All(x => x.Name != name), cts.Token);
         }
     }
 }

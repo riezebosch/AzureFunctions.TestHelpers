@@ -12,7 +12,7 @@ namespace AzureFunctions.TestHelpers.Orchestrators
         [FunctionName(nameof(DemoOrchestration))]
         public static async Task Run([OrchestrationTrigger] IDurableOrchestrationContext context)
         {
-            var proxy = context.CreateEntityProxy<IDemoEntity>(new EntityId(nameof(DemoEntity), Guid.NewGuid().ToString()));
+            var proxy = context.CreateEntityProxy<IDemoEntity>(new EntityId(nameof(DemoEntity), context.GetInput<Guid>().ToString()));
             await proxy.Do();
 
             await context.CallActivityAsync(nameof(Activity), null);
