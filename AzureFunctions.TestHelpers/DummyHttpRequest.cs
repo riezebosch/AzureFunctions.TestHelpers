@@ -3,7 +3,9 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+#if NETSTANDARD2_1
 using Microsoft.AspNetCore.Http.Internal;
+#endif
 using Microsoft.Extensions.Primitives;
 
 namespace AzureFunctions.TestHelpers

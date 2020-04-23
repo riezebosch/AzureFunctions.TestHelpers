@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading;
 using Microsoft.AspNetCore.Http;
+#if NETSTANDARD2_1
 using Microsoft.AspNetCore.Http.Authentication;
+#endif
 using Microsoft.AspNetCore.Http.Features;
 
 namespace AzureFunctions.TestHelpers
@@ -24,7 +26,9 @@ namespace AzureFunctions.TestHelpers
         public override HttpResponse Response { get; } = null;
         public override ConnectionInfo Connection { get; } = null;
         public override WebSocketManager WebSockets { get; } = null;
+#if NETSTANDARD2_1
         [Obsolete] public override AuthenticationManager Authentication { get; } = null;
+#endif
         public override ClaimsPrincipal User { get; set; }
         public override IDictionary<object, object> Items { get; set; } = new Dictionary<object, object>();
         public override IServiceProvider RequestServices { get; set; }
