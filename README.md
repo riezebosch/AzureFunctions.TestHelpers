@@ -1,4 +1,4 @@
-[![build](https://ci.appveyor.com/api/projects/status/ee41yv4jpp40xj7d?svg=true)](https://ci.appveyor.com/project/riezebosch/azurefunctions-testhelpers/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/ee41yv4jpp40xj7d/branch/master?svg=true)](https://ci.appveyor.com/project/riezebosch/azurefunctions-testhelpers/branch/master)
 [![nuget](https://img.shields.io/nuget/v/AzureFunctions.TestHelpers.svg)](https://www.nuget.org/packages/AzureFunctions.TestHelpers/)
 
 # AzureFunctions.TestHelpers ⚡
