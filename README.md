@@ -21,6 +21,10 @@ You'll ❤ the feedback!
 
 ## Configure Services for Dependency Injection
 
+I just found out the default `ConfigureServices` on the `HostBuilder` also works. 
+But if it makes more sense to you to configure services on the `WebJobsBuilder` since
+you also configure the `Startup` there you can use:
+
 ```c#
 mock = Substitute.For<IInjectable>();
 host = new HostBuilder()
@@ -76,9 +80,10 @@ in the standard libraries, I created the `DummyHttpRequest`.
 ```c#
 await jobs.CallAsync(nameof(DemoInjection), new Dictionary<string, object>
 {
-    ["request"] = new DummyHttpRequest()
+    ["request"] = new DummyHttpRequest("{ \"some-key\": \"some value\" }")
 });
 ```
+*New*: Now you can set string content via the constructor overload! 
 
 You can set all kinds of regular settings on the request when needed:
 
@@ -87,7 +92,10 @@ var request = new DummyHttpRequest
 {
     Scheme = "http",
     Host = new HostString("some-other"),
-    Headers = {["Authorization"] = $"Bearer {token}"}
+    Headers = {
+        ["Authorization"] = $"Bearer {token}",
+        ["Content-Type"] =  "application/json"
+    }
 };
 ```
 

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -10,11 +11,19 @@ using Microsoft.Extensions.Primitives;
 
 namespace AzureFunctions.TestHelpers
 {
-    public class DummyHttpRequest : HttpRequest
+    public sealed class DummyHttpRequest : HttpRequest
     {
-        public DummyHttpRequest()
+        private readonly string _content;
+        private Stream _stream;
+
+        public DummyHttpRequest() : this("")
+        {
+        }
+        
+        public DummyHttpRequest(string content)
         {
             HttpContext = new DummyHttpContext(this);
+            _content = content;
         }
         public override Task<IFormCollection> ReadFormAsync(CancellationToken cancellationToken = new CancellationToken()) => 
             Task.FromResult((IFormCollection)new FormCollection(new Dictionary<string, StringValues>()));
@@ -33,7 +42,13 @@ namespace AzureFunctions.TestHelpers
         public override IRequestCookieCollection Cookies { get; set; }
         public override long? ContentLength { get; set; }
         public override string ContentType { get; set; }
-        public override Stream Body { get; set; } = new MemoryStream();
+
+        public override Stream Body
+        {
+            get => _stream ??= new MemoryStream(Encoding.UTF8.GetBytes(_content));
+            set => _stream = value;
+        }
+
         public override bool HasFormContentType { get; } = false;
         public override IFormCollection Form { get; set; }
     }
