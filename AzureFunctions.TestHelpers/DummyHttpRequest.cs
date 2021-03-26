@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -11,7 +12,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace AzureFunctions.TestHelpers
 {
-    public sealed class DummyHttpRequest : HttpRequest
+    public sealed class DummyHttpRequest : HttpRequest, IDisposable
     {
         private readonly string _content;
         private Stream _stream;
@@ -51,5 +52,7 @@ namespace AzureFunctions.TestHelpers
 
         public override bool HasFormContentType { get; } = false;
         public override IFormCollection Form { get; set; }
+
+        public void Dispose() => _stream?.Dispose();
     }
 }
