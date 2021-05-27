@@ -11,7 +11,7 @@ namespace AzureFunctions.TestHelpers
     {
         [FunctionName(nameof(WaitForFunction))]
         [NoAutomaticTrigger]
-        public static async Task Run([DurableClient]IDurableOrchestrationClient client, string name, TimeSpan? timeout)
+        public static async Task Run([DurableClient]IDurableOrchestrationClient client, string name, TimeSpan? retryDelay, TimeSpan? timeout)
         {
             using var cts = new CancellationTokenSource();
             if (timeout != null)
@@ -19,7 +19,7 @@ namespace AzureFunctions.TestHelpers
                 cts.CancelAfter(timeout.Value);
             }
             
-            await client.Wait(status => status.All(x => x.Name != name), cts.Token);
+            await client.Wait(status => status.All(x => x.Name != name), retryDelay, cts.Token);
         }
     }
 }

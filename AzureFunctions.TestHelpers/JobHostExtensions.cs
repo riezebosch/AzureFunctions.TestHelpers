@@ -15,11 +15,15 @@ namespace AzureFunctions.TestHelpers
         /// Please, chain the <see cref="ThrowIfFailed" /> and <see cref="Purge"/> to this method for that behavior.
         /// </remarks>
         /// <remarks>
-        /// Use <see cref="WaitFor(IJobHost, string, TimeSpan?)"/> when using durable entities or you'll wait forever.
+        /// Use <see cref="WaitFor(IJobHost, string, TimeSpan?, TimeSpan?)"/> when using durable entities or you'll wait forever.
         /// </remarks>
-        public static async Task<IJobHost> Ready(this IJobHost jobs, TimeSpan? timeout = null)
+        public static async Task<IJobHost> Ready(this IJobHost jobs, TimeSpan? timeout = null, TimeSpan? retryDelay = null)
         {
-            await jobs.CallAsync(nameof(ReadyFunction), new Dictionary<string, object> {["timeout"] = timeout});
+            await jobs.CallAsync(nameof(ReadyFunction), new Dictionary<string, object>
+            {
+                ["timeout"] = timeout,
+                ["retryDelay"] = retryDelay
+            });
             return jobs;
         }
         
@@ -30,22 +34,24 @@ namespace AzureFunctions.TestHelpers
         /// This method does NOT throw when orchestrations have failed.
         /// Please, chain the <see cref="ThrowIfFailed" /> and <see cref="Purge"/> to this method for that behavior.
         /// </remarks>
-        public static async Task<IJobHost> Ready(this Task<IJobHost> task, TimeSpan? timeout = null)
+        public static async Task<IJobHost> Ready(this Task<IJobHost> task, TimeSpan? timeout = null, TimeSpan? retryDelay = null)
         {
             var jobs = await task;
-            return await jobs.Ready(timeout);
+            return await jobs.Ready(timeout, retryDelay);
         }
         
         /// <summary>
         /// REMARK: This method does NOT throw when orchestrations have failed.
         /// Please, chain the <see cref="ThrowIfFailed" /> and <see cref="Purge"/> to this method for that behavior.
         /// </summary>
-        public static async Task<IJobHost> WaitFor(this IJobHost jobs, string orchestration, TimeSpan? timeout = null)
+        public static async Task<IJobHost> WaitFor(this IJobHost jobs, string orchestration, TimeSpan? timeout = null, TimeSpan? retry = null)
         {
             await jobs.CallAsync(nameof(WaitForFunction), new Dictionary<string, object>
             {
                 ["timeout"] = timeout,
-                ["name"] = orchestration
+                ["retryDelay"] = retry,
+                ["name"] = orchestration,
+
             });
 
             return jobs;
@@ -55,10 +61,10 @@ namespace AzureFunctions.TestHelpers
         /// REMARK: This method does NOT throw when orchestrations have failed.
         /// Please, chain the <see cref="ThrowIfFailed" /> and <see cref="Purge"/> to this method for that behavior.
         /// </summary>
-        public static async Task<IJobHost> WaitFor(this Task<IJobHost> task, string orchestration, TimeSpan? timeout = null)
+        public static async Task<IJobHost> WaitFor(this Task<IJobHost> task, string orchestration, TimeSpan? timeout = null, TimeSpan? retry = null)
         {
             var jobs = await task;
-            return await jobs.WaitFor(orchestration, timeout);
+            return await jobs.WaitFor(orchestration, timeout, retry);
         }
         
         /// <summary>
