@@ -9,7 +9,7 @@ namespace AzureFunctions.TestHelpers
     internal static class DurableOrchestrationClientExtensions
     {
         public static async Task Wait(this IDurableOrchestrationClient client,
-            Func<IEnumerable<DurableOrchestrationStatus>, bool> until, CancellationToken token)
+            Func<IEnumerable<DurableOrchestrationStatus>, bool> until, TimeSpan? retryDelay, CancellationToken token)
         {
             while (!token.IsCancellationRequested)
             {
@@ -24,7 +24,7 @@ namespace AzureFunctions.TestHelpers
                     break;
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(5), token);
+                await Task.Delay(retryDelay ?? TimeSpan.FromSeconds(1), token);
             }
         }
     }

@@ -55,6 +55,33 @@ namespace AzureFunctions.TestHelpers.Tests
         }
 
         [Fact]
+        public async Task WaitForWith_fast_retry()
+        {
+            // Arrange
+            var jobs = _host.Jobs;
+
+            // Act
+            await jobs.CallAsync(nameof(DemoStarter), new Dictionary<string, object>
+            {
+                ["timerInfo"] = new TimerInfo(new WeeklySchedule(), new ScheduleStatus())
+            });
+
+            await jobs
+                .WaitFor(nameof(DemoOrchestration), retry: TimeSpan.FromMilliseconds(100))
+                .ThrowIfFailed()
+                .Purge();
+
+            // Assert
+            await _host.Mock
+                .Received()
+                .Execute("from an activity");
+            
+            await _host.Mock
+                .Received()
+                .Execute("from an entity");
+        }
+
+        [Fact]
         public async Task WaitForTimeout()
         {
             // Arrange
