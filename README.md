@@ -13,6 +13,7 @@ You'll ❤ the feedback!
 
 ## Updates
 
+* v3.3: Allow to pass a retry delay on Wait and Ready methods
 * v3.2: Updated dependencies, Ready also ignored durable entities
 * v3.1: [WaitFor](#waitfor) to better support durable entities
 * v3.0: Upgrade to durable task v2
