@@ -1,4 +1,4 @@
-version: 3.2.{build}
+version: 3.3.{build}
 pull_requests:
   do_not_increment_build_number: true
 image: Ubuntu1804
@@ -27,6 +27,6 @@ after_test:
 deploy:
 - provider: NuGet
   api_key:
-    secure: y2c/jyVXBMLBd0ffsnuN6XjhjIS7rg1+cIbBgewTR2N6nHxby45w5/0trQYJ5hmR
+    secure: 8aOBvUnWUu9wLpdkMUCL3bJ5nJXWk/ammKeJk+LVDtyNpIfQLjEOgcDVr9VNgJ6d
   on:
     branch: master
