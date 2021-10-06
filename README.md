@@ -22,7 +22,7 @@ You'll ❤ the feedback!
 
 ## Configure Services for Dependency Injection
 
-I just found out the default `ConfigureServices` on the `HostBuilder` also works. 
+I just found out the default `ConfigureServices` on the `HostBuilder` also works.
 But if it makes more sense to you to configure services on the `WebJobsBuilder` since
 you also configure the `Startup` there you can use:
 
@@ -96,6 +96,19 @@ var request = new DummyHttpRequest
     Headers = {
         ["Authorization"] = $"Bearer {token}",
         ["Content-Type"] =  "application/json"
+    }
+};
+```
+
+_New_: Now you can use a DummyQueryCollection to mock the url query:
+
+```c#
+var request = new DummyHttpRequest
+{
+    Query = new DummyQueryCollection
+    {
+        { "firstname", "Jane" },
+        { "lastname", "Doe" }
     }
 };
 ```
