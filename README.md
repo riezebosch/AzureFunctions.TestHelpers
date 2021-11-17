@@ -107,8 +107,8 @@ var request = new DummyHttpRequest
 {
     Query = new DummyQueryCollection
     {
-        { "firstname", "Jane" },
-        { "lastname", "Doe" }
+        ["firstname"] = "Jane",
+        ["lastname"] = "Doe"
     }
 };
 ```

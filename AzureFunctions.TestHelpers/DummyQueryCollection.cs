@@ -7,16 +7,21 @@ namespace AzureFunctions.TestHelpers
 {
     public sealed class DummyQueryCollection : IQueryCollection
     {
-        private Dictionary<string, StringValues> innerDict = new Dictionary<string, StringValues>();
+        private readonly Dictionary<string, StringValues> _store = new();
 
-        public StringValues this[string key] => innerDict[key];
-        public int Count => innerDict.Count;
-        public ICollection<string> Keys => innerDict.Keys;
-        public bool ContainsKey(string key) => innerDict.ContainsKey(key);
-        public IEnumerator<KeyValuePair<string, StringValues>> GetEnumerator() => innerDict.GetEnumerator();
-        public bool TryGetValue(string key, out StringValues value) => innerDict.TryGetValue(key, out value);
-        IEnumerator IEnumerable.GetEnumerator() => innerDict.GetEnumerator();
+        public StringValues this[string key]
+        {
+            get => _store[key];
+            set => _store[key] = value;
+        }
 
-        public void Add(string key, StringValues value) => innerDict.Add(key, value);
+        public int Count => _store.Count;
+        public ICollection<string> Keys => _store.Keys;
+        public bool ContainsKey(string key) => _store.ContainsKey(key);
+        public IEnumerator<KeyValuePair<string, StringValues>> GetEnumerator() => _store.GetEnumerator();
+        public bool TryGetValue(string key, out StringValues value) => _store.TryGetValue(key, out value);
+        IEnumerator IEnumerable.GetEnumerator() => _store.GetEnumerator();
+
+        public void Add(string key, StringValues value) => _store.Add(key, value);
     }
 }
