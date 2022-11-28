@@ -27,6 +27,6 @@ after_test:
 deploy:
 - provider: NuGet
   api_key:
-    secure: 8aOBvUnWUu9wLpdkMUCL3bJ5nJXWk/ammKeJk+LVDtyNpIfQLjEOgcDVr9VNgJ6d
+    secure: 6sPnG9susETMj+SCJB7ESTUOoqhVZ6OAO1W+Qb3Y0h+qjCOo5qnbev8l5ISg32hr
   on:
     branch: main
