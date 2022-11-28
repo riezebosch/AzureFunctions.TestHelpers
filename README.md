@@ -13,6 +13,7 @@ You'll ❤ the feedback!
 
 ## Updates
 
+* v4.0: Update to Azure Functions SDK v4
 * v3.3: Allow to pass a retry delay on Wait and Ready methods
 * v3.2: Updated dependencies, Ready also ignored durable entities
 * v3.1: [WaitFor](#waitfor) to better support durable entities

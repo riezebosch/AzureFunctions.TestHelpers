@@ -98,9 +98,9 @@ namespace AzureFunctions.TestHelpers.Tests
             });
 
             // Act & Assert
-            jobs.Invoking(async x => await x.WaitFor(nameof(DemoOrchestration), TimeSpan.FromSeconds(20)))
+            await jobs.Invoking(async x => await x.WaitFor(nameof(DemoOrchestration), TimeSpan.FromSeconds(20)))
                 .Should()
-                .Throw<TaskCanceledException>();
+                .ThrowAsync<TaskCanceledException>();
         }
 
         [Fact]
@@ -144,11 +144,11 @@ namespace AzureFunctions.TestHelpers.Tests
             });
             
             // Assert
-            jobs.Invoking(x => x
+            await jobs.Invoking(x => x
                     .WaitFor(nameof(DemoOrchestration), TimeSpan.FromSeconds(20))
                     .ThrowIfFailed())
                 .Should()
-                .Throw<Exception>();
+                .ThrowAsync<Exception>();
         }
         
         [Fact]
