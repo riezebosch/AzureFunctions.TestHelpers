@@ -320,28 +320,19 @@ But please, don't to do a `ConfigureAwait(false).GetAwaiter().GetResult()`.
 ## Azure Storage Account
 
 You need an azure storage table to store the state of the durable functions.
-The only two options currently are [Azure](#option-1-azure) and the [Azure Storage Emulator](#option-2-azure-storage-emulator).
+The two options currently are [Azure](#option-1-azure) and the [Azurite](#option-2-azurite).
 
 ### Option 1: Azure
 
 Just copy the [connection string from your storage account](https://docs.microsoft.com/en-us/azure/storage/common/storage-configure-connection-string#view-and-copy-a-connection-string),
 works everywhere.
 
-### Option 2: Azure Storage Emulator
-
-Set the connection string to `UseDevelopmentStorage=true`. Unfortunately works only on Windows. See this [blog](https://zimmergren.net/azure-devops-unit-tests-storage-emulator-hosted-agent/)
-on how to enable the storage emulator in an Azure DevOps pipeline.
-
-### Option 3: Azurite
+### Option 2: Azurite
 
 `azurite@v3` **does have** the [required features implemented](https://github.com/Azure/Azurite#azurite-v3) now!
 
-```shell
-npm i -g azurite@3
-azurite
-```
-
-See [test](./AzureFunctions.TestHelpers.Tests/UsingAzurite.cs) and [fixture](./AzureFunctions.TestHelpers.Tests/AzuriteContainer.cs) for using docker to host azurite in a container.
+See [test](./AzureFunctions.TestHelpers.Tests/UsingAzurite.cs) and [fixture](./AzureFunctions.TestHelpers.Tests/AzuriteContainer.cs) for using docker to host azurite in a container,
+or checkout the [docs](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite) on how to run it on your system..
 
 ### Set the Storage Connection String
 
