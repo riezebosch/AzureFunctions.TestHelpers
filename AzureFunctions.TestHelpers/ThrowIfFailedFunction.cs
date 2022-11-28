@@ -10,6 +10,7 @@ namespace AzureFunctions.TestHelpers
     public static class ThrowIfFailedFunction
     {
         [FunctionName(nameof(ThrowIfFailedFunction))]
+        [NoAutomaticTrigger]
         public static async Task Run([DurableClient]IDurableOrchestrationClient client)
         {
             var failed = await client.ListInstancesAsync(new OrchestrationStatusQueryCondition{ RuntimeStatus = new[] { OrchestrationRuntimeStatus.Failed } }, CancellationToken.None);

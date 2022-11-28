@@ -9,6 +9,7 @@ namespace AzureFunctions.TestHelpers
     public static class TerminateFunction
     {
         [FunctionName(nameof(TerminateFunction))]
+        [NoAutomaticTrigger]
         public static async Task Run([DurableClient]IDurableOrchestrationClient client)
         {
             var all = await client.ListInstancesAsync(new OrchestrationStatusQueryCondition

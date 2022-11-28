@@ -9,6 +9,7 @@ namespace AzureFunctions.TestHelpers
     public static class PurgeFunction
     {
         [FunctionName(nameof(PurgeFunction))]
+        [NoAutomaticTrigger]
         public static async Task Run([DurableClient]IDurableOrchestrationClient client)
         {
             await client.PurgeInstanceHistoryAsync(
