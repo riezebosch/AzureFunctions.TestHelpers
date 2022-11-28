@@ -18,9 +18,14 @@
         <Description>Spin up integration tests on your Azure Functions!</Description>
         <PackageReleaseNotes>Update to functions sdk v4</PackageReleaseNotes>
         <PackageTags>azure;functions;serverless;integration;testing;tdd</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/riezebosch/AzureFunctions.TestHelpers.git</RepositoryUrl>
         <Version>0.0.1234</Version>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\README.md" Pack="true" PackagePath="" />
+    </ItemGroup>
 </Project>
