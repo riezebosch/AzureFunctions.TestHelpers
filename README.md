@@ -334,8 +334,14 @@ on how to enable the storage emulator in an Azure DevOps pipeline.
 
 ### Option 3: Azurite
 
-Unfortunately, `azurite@v2` doesn't work with the current version of durable functions,
-and `azurite@v3` doesn't have the [required features (implemented yet)](https://github.com/Azure/Azurite#azurite-v3).
+`azurite@v3` **does have** the [required features implemented](https://github.com/Azure/Azurite#azurite-v3) now!
+
+```shell
+npm i -g azurite@3
+azurite
+```
+
+See [test](./AzureFunctions.TestHelpers.Tests/UsingAzurite.cs) and [fixture](./AzureFunctions.TestHelpers.Tests/AzuriteContainer.cs) for using docker to host azurite in a container.
 
 ### Set the Storage Connection String
 
