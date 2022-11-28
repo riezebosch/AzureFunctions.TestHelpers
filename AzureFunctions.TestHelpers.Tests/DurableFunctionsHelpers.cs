@@ -87,7 +87,7 @@ namespace AzureFunctions.TestHelpers.Tests
             // Arrange
             _host.Mock
                 .When(x => x.Execute(Arg.Any<string>()))
-                .Do(x => Thread.Sleep(60000));
+                .Do(_ => Thread.Sleep(60000));
 
             var jobs = _host.Jobs;
 
@@ -109,7 +109,7 @@ namespace AzureFunctions.TestHelpers.Tests
             // Arrange
             _host.Mock
                 .When(x => x.Execute(Arg.Any<string>()))
-                .Do(x => throw new InvalidOperationException());
+                .Do(_ => throw new InvalidOperationException());
 
             var jobs = _host.Jobs;
             await jobs.CallAsync(nameof(DemoStarter), new Dictionary<string, object>
@@ -133,7 +133,7 @@ namespace AzureFunctions.TestHelpers.Tests
             // Arrange
             _host.Mock
                 .When(x => x.Execute(Arg.Any<string>()))
-                .Do(x => throw new InvalidOperationException());
+                .Do(_ => throw new InvalidOperationException());
 
             var jobs = _host.Jobs;
 
@@ -157,7 +157,7 @@ namespace AzureFunctions.TestHelpers.Tests
             // Arrange
             _host.Mock
                 .When(x => x.Execute(Arg.Any<string>()))
-                .Do(x => Thread.Sleep(600000));
+                .Do(_ => Thread.Sleep(600000));
 
             var jobs = _host.Jobs;
             await jobs.CallAsync(nameof(DemoStarter), new Dictionary<string, object>
