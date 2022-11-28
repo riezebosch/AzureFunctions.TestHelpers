@@ -24,7 +24,7 @@ public class UsingAzurite : IClassFixture<AzuriteContainer>
         Environment.SetEnvironmentVariable("AzureWebJobsStorage", "UseDevelopmentStorage=true");
         using var host = new HostBuilder()
             .ConfigureWebJobs(builder => builder
-                .AddDurableTask()
+                .AddDurableTask(options => options.LocalRpcEndpointEnabled = false)
                 .AddAzureStorageCoreServices()
                 .UseWebJobsStartup<Startup>())
             .Build();

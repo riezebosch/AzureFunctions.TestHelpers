@@ -27,7 +27,6 @@ namespace AzureFunctions.TestHelpers.Tests
             using var host = new HostBuilder()
                 .ConfigureWebJobs(builder => builder
                     .AddHttp(options => options.SetResponse = async (_, o) => await hypothesis.Test(o))
-                    .AddDurableTask()
                     .UseWebJobsStartup<Startup>()
                     .ConfigureServices(services => services.Replace(ServiceDescriptor.Singleton(mock))))
                 .Build();
