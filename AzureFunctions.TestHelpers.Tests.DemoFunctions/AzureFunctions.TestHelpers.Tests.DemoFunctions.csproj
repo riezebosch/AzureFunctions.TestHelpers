@@ -5,6 +5,7 @@
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
     <RootNamespace>AzureFunctions.TestHelpers</RootNamespace>
     <LangVersion>latest</LangVersion>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
