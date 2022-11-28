@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FluentAssertions;
+using FluentAssertions.Extensions;
+using Hypothesist;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
@@ -18,12 +19,14 @@ namespace AzureFunctions.TestHelpers.Tests
         public static async Task HttpTriggeredFunctionWithDependencyReplacement()
         {
             // Arrange
-            object response = null;
+            var hypothesis = Hypothesis.For<object>()
+                .Any(o => o is OkResult);
+            
             var mock = Substitute.For<IInjectable>();
 
             using var host = new HostBuilder()
                 .ConfigureWebJobs(builder => builder
-                    .AddHttp(options => options.SetResponse = (request, o) => response = o)
+                    .AddHttp(options => options.SetResponse = async (_, o) => await hypothesis.Test(o))
                     .AddDurableTask()
                     .UseWebJobsStartup<Startup>()
                     .ConfigureServices(services => services.Replace(ServiceDescriptor.Singleton(mock))))
@@ -42,9 +45,7 @@ namespace AzureFunctions.TestHelpers.Tests
                 .Received()
                 .Execute("from an http triggered function");
 
-            response
-                .Should()
-                .BeOfType<OkResult>();
+            await hypothesis.Validate(10.Seconds());
         }
     }
 }

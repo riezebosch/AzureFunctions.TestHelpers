@@ -120,10 +120,12 @@ callback on the `AddHttp` extension method:
 
 ```c#
 // Arrange
-object response = null;
+var hypothesis = Hypothesis.For<object>()
+    .Any(o => o is OkResult);
+
 using (var host = new HostBuilder()
     .ConfigureWebJobs(builder => builder
-        .AddHttp(options => options.SetResponse = (request, o) => response = o))
+        .AddHttp(options => options.SetResponse = async (_, o) => await hypothesis.Test(o)))
     .Build())
 {
     await host.StartAsync();
@@ -137,10 +139,10 @@ using (var host = new HostBuilder()
 }
 
 // Assert
-response
-    .Should()
-    .BeOfType<OkResult>();
+await hypothesis.Validate(10.Seconds());
 ```
+
+I'm using [Hypothesist](https://github.com/riezebosch/hypothesist) for easy async testing.
 
 ## Durable Functions
 
