@@ -21,6 +21,24 @@ You'll ❤ the feedback!
 * v2.1: Removed AddDurableTaskInTestHub
 * v2.0: Wait, ThrowIfFailed and Purge separated.
 
+## Use Startup class
+
+If only inheriting from `IWebJobsStartup`
+```c#
+new HostBuilder()
+    .ConfigureWebJobs(builder => builder
+        .UseWebJobsStartup<Startup>())
+    .Build();
+```
+
+If inheriting from `FunctionsStartup`
+```c#
+new HostBuilder()
+    .ConfigureWebJobs(builder => builder
+        .UseWebJobsStartup(typeof(Startup), new WebJobsBuilderContext(), NullLoggerFactory.Instance))
+    .Build();
+```
+
 ## Configure Services for Dependency Injection
 
 I just found out the default `ConfigureServices` on the `HostBuilder` also works.
@@ -316,6 +334,26 @@ But please, don't to do a `ConfigureAwait(false).GetAwaiter().GetResult()`.
 > Using ConfigureAwait(false) to avoid deadlocks is a dangerous practice. You would have to use ConfigureAwait(false) for every await in the transitive closure of all methods called by the blocking code, including all third- and second-party code. Using ConfigureAwait(false) to avoid deadlock is at best just a hack).
 
 [Don’t block on async code](https://blog.stephencleary.com/2012/07/dont-block-on-async-code.html).
+
+## Queue Triggered Functions
+```c#
+// Arrange
+using (var host = new HostBuilder()
+    .ConfigureWebJobs(builder => builder
+        .AddAzureStorageQueues()
+        .ConfigureServices(services => services.AddSingleton(mock)))
+    .Build())
+{
+    await host.StartAsync();
+    var jobs = host.Services.GetService<IJobHost>();
+
+    // Act
+    await jobs.CallAsync(nameof(DemoQueueFunction), new Dictionary<string, object>
+    {
+        ["queueItem"] = ""
+    });
+}
+```
 
 ## Azure Storage Account
 
