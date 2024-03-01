@@ -18,14 +18,12 @@ namespace AzureFunctions.TestHelpers.Tests
         public static async Task HttpTriggeredFunctionWithDependencyReplacement()
         {
             // Arrange
-            var hypothesis = Hypothesis.For<object>()
-                .Any(o => o is OkResult);
-            
+            var observer = Observer.For<object>();
             var mock = Substitute.For<IInjectable>();
 
             using var host = new HostBuilder()
                 .ConfigureWebJobs(builder => builder
-                    .AddHttp(options => options.SetResponse = async (_, o) => await hypothesis.Test(o))
+                    .AddHttp(options => options.SetResponse = (_, o) => observer.Add(o))
                     .UseWebJobsStartup<Startup>()
                     .ConfigureServices(services => services.Replace(ServiceDescriptor.Singleton(mock))))
                 .Build();
@@ -43,7 +41,12 @@ namespace AzureFunctions.TestHelpers.Tests
                 .Received()
                 .Execute("from an http triggered function");
 
-            await hypothesis.Validate(10.Seconds());
+            await Hypothesis
+                .On(observer)
+                .Timebox(2.Seconds())
+                .Any()
+                .Match(o => o is OkResult)
+                .Validate();
         }
     }
 }
