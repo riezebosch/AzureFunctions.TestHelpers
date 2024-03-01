@@ -1,4 +1,5 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/ee41yv4jpp40xj7d/branch/main?svg=true)](https://ci.appveyor.com/project/riezebosch/azurefunctions-testhelpers/branch/main)
+[![codecov](https://codecov.io/gh/riezebosch/AzureFunctions.TestHelpers/branch/main/graph/badge.svg)](https://codecov.io/gh/riezebosch/AzureFunctions.TestHelpers)
 [![nuget](https://img.shields.io/nuget/v/AzureFunctions.TestHelpers.svg)](https://www.nuget.org/packages/AzureFunctions.TestHelpers/)
 
 # AzureFunctions.TestHelpers ⚡
