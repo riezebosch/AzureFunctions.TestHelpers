@@ -1,16 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <LangVersion>Latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.msbuild" Version="3.2.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Ductus.FluentDocker" Version="2.10.57" />
     <PackageReference Include="Hypothesist" Version="2.0.30" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />

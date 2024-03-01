@@ -9,8 +9,6 @@ only_commits:
 configuration: Release
 environment:
   CODECOV_TOKEN: 00146f9e-ddb9-42e6-a357-fd0f0ec4438a
-  AzureWebJobsStorage:
-    secure: 8IK3x1NQkPW0v67xtLBrhkZzT+LUCM+JN9mhXsMfdMeeE8IqGxOdLi0gblAvIlsHu2/4E2lL46wzz2jokxJBTlySMOSuzDjQi8yaY7N0GArbVGSXAyAFEmWLpI3FHBMF6Qv2y3dWO4li8XgIWR7wPygv2wDowVr+/ap70gMiAMHAVySFbkSyEW5nfaKyMLA7UQGtdqvI3QwHSqZgcy49pWVlHPcW1i+K76cQq5ia6lbX7UgWJCspXqgLJLGpOHBhiNsaZfyMFY9z+K9J0vCZpw==
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
