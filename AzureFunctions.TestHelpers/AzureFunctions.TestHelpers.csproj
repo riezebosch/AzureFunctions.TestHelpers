@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.1</TargetFrameworks>
+        <TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
         <IsPackable>true</IsPackable>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
@@ -11,6 +11,10 @@
         <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="[4.0.0,5)" />
     </ItemGroup>
 
+    <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.1'">
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+    
     <PropertyGroup>
         <Authors>Manuel Riezebosch</Authors>
         <NeutralLanguage>en-US</NeutralLanguage>

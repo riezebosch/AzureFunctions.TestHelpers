@@ -17,7 +17,10 @@ using Xunit;
 
 namespace AzureFunctions.TestHelpers.Tests
 {
-    public class DurableFunctionsHelper : IClassFixture<DurableFunctionsHelper.HostFixture>, IAsyncLifetime
+    public class DurableFunctionsHelper : 
+        IClassFixture<DurableFunctionsHelper.HostFixture>,
+        IAsyncLifetime,
+        IClassFixture<AzuriteContainer>
     {
         private readonly HostFixture _host;
 
