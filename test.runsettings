@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+    <DataCollectionRunSettings>
+        <DataCollectors>
+            <DataCollector friendlyName="Code Coverage" uri="datacollector://Microsoft/CodeCoverage/2.0">
+                <Configuration>
+                    <Format>Cobertura</Format>
+                    <CodeCoverage>
+                        <ModulePaths>
+                            <Include>
+                                <ModulePath>.*AzureFunctions.[a-zA-Z.]*dll$</ModulePath>
+                            </Include>
+                        </ModulePaths>
+                    </CodeCoverage>
+                </Configuration>
+            </DataCollector>
+        </DataCollectors>
+    </DataCollectionRunSettings>
+</RunSettings>

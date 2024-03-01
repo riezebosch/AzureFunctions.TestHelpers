@@ -28,6 +28,8 @@ before_build:
 build:
   publish_nuget: true
   verbosity: minimal
+test_script:
+  - dotnet test -s test.runsettings
 after_test:
   - bash <(curl -s https://codecov.io/bash)
 deploy:
