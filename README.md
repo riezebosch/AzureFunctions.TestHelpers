@@ -139,12 +139,11 @@ callback on the `AddHttp` extension method:
 
 ```c#
 // Arrange
-var hypothesis = Hypothesis.For<object>()
-    .Any(o => o is OkResult);
+var observer = Observer.For<object>();
 
 using (var host = new HostBuilder()
     .ConfigureWebJobs(builder => builder
-        .AddHttp(options => options.SetResponse = async (_, o) => await hypothesis.Test(o)))
+        .AddHttp(options => options.SetResponse = (_, o) => observer.Add(o)))
     .Build())
 {
     await host.StartAsync();
@@ -158,7 +157,12 @@ using (var host = new HostBuilder()
 }
 
 // Assert
-await hypothesis.Validate(10.Seconds());
+await Hypothesis
+    .On(observer)
+    .Timebox(2.Seconds())
+    .Any()
+    .Match(o => o is OkResult)
+    .Validate();
 ```
 
 I'm using [Hypothesist](https://github.com/riezebosch/hypothesist) for easy async testing.
